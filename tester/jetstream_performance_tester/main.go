@@ -67,7 +67,11 @@ func TestJetStreamPerformance() error {
 	}
 
 	if err := TestJetStreamChanSubscribe(conf, js); err != nil {
-		return xerrors.Errorf("測試 JetStream 的接收效能失敗: %w", err)
+		return xerrors.Errorf("測試 JetStream (Chan Subscribe) 的接收效能失敗: %w", err)
+	}
+
+	if err := TestJetStreamPullSubscribe(conf, js); err != nil {
+		return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
 	}
 
 	return nil
@@ -134,6 +138,35 @@ func TestJetStreamChanSubscribe(conf *config.Config, jetStreamCtx nats.JetStream
 
 		if atomic.AddInt32(&counter, 1) == int32(conf.Testers.JetStreamPerformanceTest.Times) {
 			break
+		}
+	}
+
+	elapsedTime := time.Since(now)
+	fmt.Printf("%d 筆接收花費時間 %v (每筆平均花費 %v)\n",
+		conf.Testers.JetStreamPerformanceTest.Times,
+		elapsedTime,
+		elapsedTime/time.Duration(conf.Testers.JetStreamPerformanceTest.Times),
+	)
+	return nil
+}
+
+func TestJetStreamPullSubscribe(conf *config.Config, jetStreamCtx nats.JetStreamContext) error {
+	fmt.Println("開始測試 JetStream (Pull Subscribe) 的接收效能")
+
+	now := time.Now()
+	var counter = 0
+	sub, err := jetStreamCtx.PullSubscribe(conf.Testers.JetStreamPerformanceTest.Subject, "ray-jetstream-performance")
+	if err != nil {
+		return xerrors.Errorf("訂閱 %s 失敗: %w", conf.Testers.JetStreamPerformanceTest.Subject, err)
+	}
+
+	for counter < conf.Testers.JetStreamPerformanceTest.Times {
+		msgs, _ := sub.Fetch(1000)
+
+		for _, msg := range msgs {
+			_ = msg
+			// fmt.Printf("Received a JetStream message: %s\n", string(msg.Data))
+			counter++
 		}
 	}
 
