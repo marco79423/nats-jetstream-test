@@ -77,10 +77,11 @@ func TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel str
 	quit := make(chan int)
 	var counter int32 = 0
 	if _, err := stanConn.Subscribe(channel, func(msg *stan.Msg) {
+		// fmt.Printf("Received a Streaming message: %s\n", string(msg.Data))
+
 		if atomic.AddInt32(&counter, 1) == int32(conf.Testers.StreamingPerformanceTest.Times) {
 			quit <- 1
 		}
-		// fmt.Printf("Received a Streaming message: %s\n", string(msg.Data))
 	}, stan.StartAt(pb.StartPosition_First)); err != nil {
 		return xerrors.Errorf("訂閱 %s 失敗: %w", channel, err)
 	}
