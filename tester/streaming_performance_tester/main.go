@@ -23,6 +23,7 @@ func TestStreamingPerformance() error {
 		return xerrors.Errorf("取得設定檔失敗: %w", err)
 	}
 
+	// 取得 Streaming 的連線
 	stanConn, err := stan.Connect(
 		conf.NATSStreaming.ClusterID,
 		conf.NATSStreaming.ClientID,
@@ -40,10 +41,12 @@ func TestStreamingPerformance() error {
 	channel := fmt.Sprintf("%s.%d", conf.Testers.StreamingPerformanceTest.Channel, rand.Int())
 	fmt.Printf("Channel: %s\n", channel)
 
+	// TestStreamingPublish 測試 Streaming 發布效能
 	if err := TestStreamingPublish(conf, stanConn, channel); err != nil {
 		return xerrors.Errorf("測試 Streaming 的發布效能失敗: %w", err)
 	}
 
+	// 測試 Streaming 訂閱效能
 	if err := TestStreamingSubscribe(conf, stanConn, channel); err != nil {
 		return xerrors.Errorf("測試 Streaming 的接收效能失敗: %w", err)
 	}
@@ -51,6 +54,7 @@ func TestStreamingPerformance() error {
 	return nil
 }
 
+// TestStreamingPublish 測試 Streaming 發布效能
 func TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel string) error {
 	fmt.Println("開始測試 Streaming 的發布效能")
 	now := time.Now()
@@ -62,7 +66,7 @@ func TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel strin
 		// fmt.Println(i)
 	}
 	elapsedTime := time.Since(now)
-	fmt.Printf("%d 筆發布花費時間 %v (每筆平均花費 %v)\n",
+	fmt.Printf("全部 %d 筆發布花費時間 %v (每筆平均花費 %v)\n",
 		conf.Testers.StreamingPerformanceTest.Times,
 		elapsedTime,
 		elapsedTime/time.Duration(conf.Testers.StreamingPerformanceTest.Times),
@@ -70,6 +74,7 @@ func TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel strin
 	return nil
 }
 
+// TestStreamingSubscribe 測試 Streaming 訂閱效能
 func TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel string) error {
 	fmt.Println("開始測試 Streaming 的接收效能")
 
@@ -88,7 +93,7 @@ func TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel str
 
 	<-quit
 	elapsedTime := time.Since(now)
-	fmt.Printf("%d 筆接收花費時間 %v (每筆平均花費 %v)\n",
+	fmt.Printf("全部 %d 筆接收花費時間 %v (每筆平均花費 %v)\n",
 		conf.Testers.StreamingPerformanceTest.Times,
 		elapsedTime,
 		elapsedTime/time.Duration(conf.Testers.StreamingPerformanceTest.Times),
