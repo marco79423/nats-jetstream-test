@@ -56,7 +56,7 @@ func TestStreamingPerformance() error {
 
 // TestStreamingPublish 測試 Streaming 發布效能
 func TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel string) error {
-	fmt.Println("開始測試 Streaming 的發布效能")
+	fmt.Println("\n開始測試 Streaming 的發布效能")
 	now := time.Now()
 	for i := 0; i < conf.Testers.StreamingPerformanceTest.Times; i++ {
 		err := stanConn.Publish(channel, []byte(fmt.Sprintf("%d", i)))
@@ -76,7 +76,7 @@ func TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel strin
 
 // TestStreamingSubscribe 測試 Streaming 訂閱效能
 func TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel string) error {
-	fmt.Println("開始測試 Streaming 的接收效能")
+	fmt.Println("\n開始測試 Streaming 的接收效能")
 
 	now := time.Now()
 	quit := make(chan int)

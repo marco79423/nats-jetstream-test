@@ -90,7 +90,7 @@ func TestJetStreamPerformance() error {
 
 // TestJetStreamPublish 測試 JetStream 發布效能
 func TestJetStreamPublish(conf *config.Config, jetStreamCtx nats.JetStreamContext) error {
-	fmt.Println("開始測試 JetStream 的發布效能")
+	fmt.Println("\n開始測試 JetStream 的發布效能")
 	now := time.Now()
 	for i := 0; i < conf.Testers.JetStreamPerformanceTest.Times; i++ {
 		_, err := jetStreamCtx.Publish(conf.Testers.JetStreamPerformanceTest.Subject, []byte(fmt.Sprintf("%d", i)))
@@ -110,7 +110,7 @@ func TestJetStreamPublish(conf *config.Config, jetStreamCtx nats.JetStreamContex
 
 // TestJetStreamSubscribe 測試 JetStream 訂閱效能 (Subscribe)
 func TestJetStreamSubscribe(conf *config.Config, jetStreamCtx nats.JetStreamContext) error {
-	fmt.Println("開始測試 JetStream 的接收效能")
+	fmt.Println("\n開始測試 JetStream (Subscribe) 的接收效能")
 
 	now := time.Now()
 	quit := make(chan int)
@@ -137,7 +137,7 @@ func TestJetStreamSubscribe(conf *config.Config, jetStreamCtx nats.JetStreamCont
 
 // TestJetStreamChanSubscribe 測試 JetStream 訂閱效能 (Chan Subscribe)
 func TestJetStreamChanSubscribe(conf *config.Config, jetStreamCtx nats.JetStreamContext) error {
-	fmt.Println("開始測試 JetStream (Chan Subscribe) 的接收效能")
+	fmt.Println("\n開始測試 JetStream (Chan Subscribe) 的接收效能")
 
 	now := time.Now()
 	msgChan := make(chan *nats.Msg, 10000)
@@ -166,7 +166,7 @@ func TestJetStreamChanSubscribe(conf *config.Config, jetStreamCtx nats.JetStream
 
 // TestJetStreamPullSubscribe 測試 JetStream 訂閱效能 (Pull Subscribe)
 func TestJetStreamPullSubscribe(conf *config.Config, fetchCount int, jetStreamCtx nats.JetStreamContext) error {
-	fmt.Println("開始測試 JetStream (Pull Subscribe) 的接收效能")
+	fmt.Println("\n開始測試 JetStream (Pull Subscribe) 的接收效能")
 
 	now := time.Now()
 
