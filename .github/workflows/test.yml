@@ -1,0 +1,42 @@
+name: Test JetStream
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test-jetstream-performance:
+    runs-on: ubuntu-latest
+
+    container: golang:1.14
+
+    services:
+      nats:
+        image: nats:2.5.0
+        options: -js
+        ports:
+          - 4222:4222
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: run golang
+        run: go run tester/jetstream_performance_tester/main.go
+
+  test-streaming-performance:
+    runs-on: ubuntu-latest
+
+    container: golang:1.14
+
+    services:
+      nats-streaming:
+        image: nats-streaming:0.22.1
+        ports:
+          - 4222:4222
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: run golang
+        run: go run tester/streaming_performance_tester/main.go

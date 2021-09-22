@@ -1,20 +1,20 @@
 nats_streaming:
   servers:
     - nats://localhost:4222
-  token: dev_sbk_rd
-  cluster_id: cluster_id
+  cluster_id: test-cluster
   client_id: client_id
+  token: ''
 
 nats_jet_stream:
   servers:
     - nats://localhost:4222
-  token: token
+  token: ''
 
 testers:
   jetstream_performance_test:
     stream: ray
     subject: ray.fuck
-    times: 10000
+    times: 1000
   streaming_performance_test:
     channel: ray.fuck
-    times: 10000
+    times: 1000

@@ -39,10 +39,7 @@ func TestJetStreamPerformance() error {
 	streamName := conf.Testers.JetStreamPerformanceTest.Stream
 
 	// 可透過 StreamInfo 取得 Stream 相關的資訊
-	stream, err := js.StreamInfo(streamName)
-	if err != nil {
-		return xerrors.Errorf("無法取得 JetStream 的 Stream %s: %w", streamName, err)
-	}
+	stream, _ := js.StreamInfo(streamName)
 
 	// 先把之前的 Stream 刪掉 (正常不用這麼做，這是為了測試用)
 	// 雖然有 PurgeStream，但效果好像不太好
@@ -190,10 +187,10 @@ func TestJetStreamPullSubscribe(conf *config.Config, fetchCount int, jetStreamCt
 	}
 
 	elapsedTime := time.Since(now)
-	fmt.Printf("一次抓 %d 筆，全部 %d 筆接收花費時間 %v (每筆平均花費 %v)\n",
-		fetchCount,
+	fmt.Printf("全部 %d 筆接收花費時間 %v (一次抓 %d 筆，每筆平均花費 %v)\n",
 		conf.Testers.JetStreamPerformanceTest.Times,
 		elapsedTime,
+		fetchCount,
 		elapsedTime/time.Duration(conf.Testers.JetStreamPerformanceTest.Times),
 	)
 	return nil
