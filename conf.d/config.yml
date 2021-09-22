@@ -11,10 +11,19 @@ nats_jet_stream:
   token: ''
 
 testers:
+  streaming_performance_test:
+    channel: ray.fuck
+    times: 1000
   jetstream_performance_test:
     stream: ray
     subject: ray.fuck
     times: 1000
-  streaming_performance_test:
-    channel: ray.fuck
-    times: 1000
+  jetstream_purge_stream_test:
+    stream: ray
+    subject: ray.fuck
+    counts:
+      - 100
+      - 1000
+      - 10000
+      - 100000
+

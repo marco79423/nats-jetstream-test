@@ -39,24 +39,22 @@ func TestJetStreamPerformance() error {
 	streamName := conf.Testers.JetStreamPerformanceTest.Stream
 
 	// 可透過 StreamInfo 取得 Stream 相關的資訊
-	stream, _ := js.StreamInfo(streamName)
+	if stream, _ := js.StreamInfo(streamName); stream == nil {
 
-	// 先把之前的 Stream 刪掉 (正常不用這麼做，這是為了測試用)
-	// 雖然有 PurgeStream，但效果好像不太好
-	if stream != nil {
-		if err := js.DeleteStream(streamName); err != nil {
-			return xerrors.Errorf("刪除 Stream %s 失敗: %w", streamName, err)
+		// 如果不存在需要主動建立 Stream
+		if _, err = js.AddStream(&nats.StreamConfig{
+			Name: streamName,
+			Subjects: []string{
+				conf.Testers.JetStreamPerformanceTest.Subject, // 例子是用 ray.fuck，但也可以設定 ray.*
+			},
+		}); err != nil {
+			return xerrors.Errorf("建立 Stream %s 失敗: %w", streamName, err)
 		}
 	}
 
-	// 重新建立一個 Stream
-	if stream, err = js.AddStream(&nats.StreamConfig{
-		Name: streamName,
-		Subjects: []string{
-			conf.Testers.JetStreamPerformanceTest.Subject, // 例子是用 ray.fuck，但也可以設定 ray.*
-		},
-	}); err != nil {
-		return xerrors.Errorf("建立 Stream %s 失敗: %w", streamName, err)
+	// 清空之間的資料
+	if err := js.PurgeStream(streamName); err != nil {
+		return xerrors.Errorf("Purge Stream 失敗: %w", err)
 	}
 
 	// 測試 JetStream 發布效能
@@ -177,7 +175,7 @@ func TestJetStreamPullSubscribe(conf *config.Config, fetchCount int, jetStreamCt
 
 	var counter = 0
 	for counter < conf.Testers.JetStreamPerformanceTest.Times {
-		msgs, _ := sub.Fetch(fetchCount)  // 不同數量也會有區別
+		msgs, _ := sub.Fetch(fetchCount) // 不同數量也會有區別
 
 		for _, msg := range msgs {
 			_ = msg

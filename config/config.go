@@ -38,8 +38,14 @@ type NATSJetStreamConfig struct {
 }
 
 type Testers struct {
-	JetStreamPerformanceTest JetStreamPerformanceTest `mapstructure:"jetstream_performance_test"`
 	StreamingPerformanceTest StreamingPerformanceTest `mapstructure:"streaming_performance_test"`
+	JetStreamPerformanceTest JetStreamPerformanceTest `mapstructure:"jetstream_performance_test"`
+	JetStreamPurgeStreamTest JetStreamPurgeStreamTest `mapstructure:"jetstream_purge_stream_test"`
+}
+
+type StreamingPerformanceTest struct {
+	Channel string `mapstructure:"channel"`
+	Times   int    `mapstructure:"times"`
 }
 
 type JetStreamPerformanceTest struct {
@@ -48,9 +54,10 @@ type JetStreamPerformanceTest struct {
 	Times   int    `mapstructure:"times"`
 }
 
-type StreamingPerformanceTest struct {
-	Channel string `mapstructure:"channel"`
-	Times   int    `mapstructure:"times"`
+type JetStreamPurgeStreamTest struct {
+	Stream  string `mapstructure:"stream"`
+	Subject string `mapstructure:"subject"`
+	Counts   []int    `mapstructure:"counts"`
 }
 
 // loadConfig 讀取設定檔
