@@ -5,6 +5,7 @@ import (
 
 	"github.com/marco79423/nats-jetstream-test/config"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/stan.go"
 	"golang.org/x/xerrors"
 )
 
@@ -20,4 +21,22 @@ func ConnectNATS(conf *config.Config, name string) (*nats.Conn, error) {
 	}
 
 	return natsConn, nil
+}
+
+// ConnectSTAN 取得 NATS Streaming 的連線
+func ConnectSTAN(conf *config.Config, name string) (stan.Conn, error) {
+	stanConn, err := stan.Connect(
+		conf.NATSStreaming.ClusterID,
+		conf.NATSStreaming.ClientID,
+		stan.NatsURL(strings.Join(conf.NATSStreaming.Servers, ",")),
+		stan.NatsOptions(
+			nats.Name(name),
+			nats.Token(conf.NATSStreaming.Token),
+		),
+	)
+	if err != nil {
+		return nil, xerrors.Errorf("取得 STAN 連線失敗: %w", err)
+	}
+
+	return stanConn, nil
 }

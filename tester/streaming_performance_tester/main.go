@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"strings"
 	"sync/atomic"
 	"time"
 
 	"github.com/marco79423/nats-jetstream-test/config"
-	"github.com/nats-io/nats.go"
+	"github.com/marco79423/nats-jetstream-test/tester/utils"
 	"github.com/nats-io/stan.go"
 	"github.com/nats-io/stan.go/pb"
 	"golang.org/x/xerrors"
@@ -24,15 +23,7 @@ func TestStreamingPerformance() error {
 	}
 
 	// 取得 Streaming 的連線
-	stanConn, err := stan.Connect(
-		conf.NATSStreaming.ClusterID,
-		conf.NATSStreaming.ClientID,
-		stan.NatsURL(strings.Join(conf.NATSStreaming.Servers, ",")),
-		stan.NatsOptions(
-			nats.Name("ray.streaming.performance"),
-			nats.Token(conf.NATSStreaming.Token),
-		),
-	)
+	stanConn, err := utils.ConnectSTAN(conf, "ray.streaming.performance")
 	if err != nil {
 		return xerrors.Errorf("取得 STAN 連線失敗: %w", err)
 	}
