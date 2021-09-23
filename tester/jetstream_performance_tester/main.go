@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"sync/atomic"
 	"time"
 
@@ -160,7 +161,9 @@ func TestJetStreamPullSubscribe(conf *config.Config, fetchCount int, jetStreamCt
 
 	now := time.Now()
 
-	sub, err := jetStreamCtx.PullSubscribe(conf.Testers.JetStreamPerformanceTest.Subject, "ray-jetstream-performance")
+	rand.Seed(time.Now().UnixNano())
+	durableName := fmt.Sprintf("ray-jetstream-performance-%d", rand.Int())
+	sub, err := jetStreamCtx.PullSubscribe(conf.Testers.JetStreamPerformanceTest.Subject, durableName)
 	if err != nil {
 		return xerrors.Errorf("訂閱 %s 失敗: %w", conf.Testers.JetStreamPerformanceTest.Subject, err)
 	}
