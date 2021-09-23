@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/marco79423/nats-jetstream-test/config"
+	"github.com/marco79423/nats-jetstream-test/tester/utils"
 	"github.com/nats-io/nats.go"
 	"golang.org/x/xerrors"
 )
@@ -19,11 +19,7 @@ func TestJetStreamPurgeStream() error {
 		return xerrors.Errorf("取得設定檔失敗: %w", err)
 	}
 
-	natsConn, err := nats.Connect(
-		strings.Join(conf.NATSJetStream.Servers, ","),
-		nats.Name("ray.jetstream.purge_stream"),
-		nats.Token(conf.NATSJetStream.Token),
-	)
+	natsConn, err := utils.ConnectNATS(conf, "ray.jetstream.purge_stream")
 	if err != nil {
 		return xerrors.Errorf("取得 NATS 連線失敗: %w", err)
 	}

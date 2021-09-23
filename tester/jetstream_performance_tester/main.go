@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
-	"strings"
 	"sync/atomic"
 	"time"
 
 	"github.com/marco79423/nats-jetstream-test/config"
+	"github.com/marco79423/nats-jetstream-test/tester/utils"
 	"github.com/nats-io/nats.go"
 	"golang.org/x/xerrors"
 )
@@ -20,11 +20,7 @@ func TestJetStreamPerformance() error {
 		return xerrors.Errorf("取得設定檔失敗: %w", err)
 	}
 
-	natsConn, err := nats.Connect(
-		strings.Join(conf.NATSJetStream.Servers, ","),
-		nats.Name("ray.jetstream.performance"),
-		nats.Token(conf.NATSJetStream.Token),
-	)
+	natsConn, err := utils.ConnectNATS(conf, "ray.jetstream.performance")
 	if err != nil {
 		return xerrors.Errorf("取得 NATS 連線失敗: %w", err)
 	}
@@ -73,14 +69,10 @@ func TestJetStreamPerformance() error {
 	}
 
 	// 測試 JetStream 訂閱效能 (Pull Subscribe)
-	if err := TestJetStreamPullSubscribe(conf, 1, js); err != nil {
-		return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
-	}
-	if err := TestJetStreamPullSubscribe(conf, 10, js); err != nil {
-		return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
-	}
-	if err := TestJetStreamPullSubscribe(conf, 100, js); err != nil {
-		return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
+	for _, fetchCount := range []int{1, 10, 100} {
+		if err := TestJetStreamPullSubscribe(conf, fetchCount, js); err != nil {
+			return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
+		}
 	}
 
 	return nil
