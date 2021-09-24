@@ -38,27 +38,35 @@ type NATSJetStreamConfig struct {
 }
 
 type Testers struct {
-	StreamingPerformanceTest StreamingPerformanceTest `mapstructure:"streaming_performance_test"`
-	JetStreamPerformanceTest JetStreamPerformanceTest `mapstructure:"jetstream_performance_test"`
-	JetStreamPurgeStreamTest JetStreamPurgeStreamTest `mapstructure:"jetstream_purge_stream_test"`
+	StreamingPerformanceTester   *StreamingPerformanceTesterConfig   `mapstructure:"streaming_performance_tester"`
+	JetStreamPurgeStreamTester   *JetStreamPurgeStreamTesterConfig   `mapstructure:"jetstream_purge_stream_tester"`
+	JetStreamMemoryStorageTester *JetStreamMemoryStorageTesterConfig `mapstructure:"jetstream_memory_storage_tester"`
+	JetStreamPerformanceTester   *JetStreamPerformanceTesterConfig   `mapstructure:"jetstream_performance_tester"`
 }
 
-type StreamingPerformanceTest struct {
+type StreamingPerformanceTesterConfig struct {
 	Channel string `mapstructure:"channel"`
 	Times   int    `mapstructure:"times"`
 }
 
-type JetStreamPerformanceTest struct {
+type JetStreamPerformanceTesterConfig struct {
 	Stream  string `mapstructure:"stream"`
 	Subject string `mapstructure:"subject"`
 	Times   int    `mapstructure:"times"`
 }
 
-type JetStreamPurgeStreamTest struct {
+type JetStreamPurgeStreamTesterConfig struct {
 	Stream  string `mapstructure:"stream"`
 	Subject string `mapstructure:"subject"`
-	Counts   []int    `mapstructure:"counts"`
+	Counts  []int  `mapstructure:"counts"`
 }
+
+type JetStreamMemoryStorageTesterConfig struct {
+	Stream  string `mapstructure:"stream"`
+	Subject string `mapstructure:"subject"`
+	Times   int    `mapstructure:"times"`
+}
+
 
 // loadConfig 讀取設定檔
 func loadConfig(rawConfig interface{}, configPath string) error {

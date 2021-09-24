@@ -1,8 +1,7 @@
-package main
+package tester
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"sync/atomic"
 	"time"
@@ -14,31 +13,42 @@ import (
 	"golang.org/x/xerrors"
 )
 
-func TestStreamingPerformance() error {
-	fmt.Println("開始測試 Streaming 的效能")
-
-	conf, err := config.GetConfig()
-	if err != nil {
-		return xerrors.Errorf("取得設定檔失敗: %w", err)
+func NewStreamingPerformanceTester(conf *config.Config) ITester {
+	return &streamingPerformanceTester{
+		conf: conf,
 	}
+}
 
+type streamingPerformanceTester struct {
+	conf *config.Config
+}
+
+func (tester *streamingPerformanceTester) Enabled() bool {
+	return tester.conf.Testers.StreamingPerformanceTester != nil
+}
+
+func (tester *streamingPerformanceTester) Name() string {
+	return "測試 Streaming 的發布和接收的效能"
+}
+
+func (tester *streamingPerformanceTester) Test() error {
 	// 取得 Streaming 的連線
-	stanConn, err := utils.ConnectSTAN(conf, "ray.streaming.performance")
+	stanConn, err := utils.ConnectSTAN(tester.conf, tester.Name())
 	if err != nil {
 		return xerrors.Errorf("取得 STAN 連線失敗: %w", err)
 	}
 
 	rand.Seed(time.Now().UnixNano())
-	channel := fmt.Sprintf("%s.%d", conf.Testers.StreamingPerformanceTest.Channel, rand.Int())
+	channel := fmt.Sprintf("%s.%d", tester.conf.Testers.StreamingPerformanceTester.Channel, rand.Int())
 	fmt.Printf("Channel: %s\n", channel)
 
-	// TestStreamingPublish 測試 Streaming 發布效能
-	if err := TestStreamingPublish(conf, stanConn, channel); err != nil {
+	// 測試 Streaming 發布效能
+	if err := tester.TestStreamingPublish(tester.conf, stanConn, channel); err != nil {
 		return xerrors.Errorf("測試 Streaming 的發布效能失敗: %w", err)
 	}
 
 	// 測試 Streaming 訂閱效能
-	if err := TestStreamingSubscribe(conf, stanConn, channel); err != nil {
+	if err := tester.TestStreamingSubscribe(tester.conf, stanConn, channel); err != nil {
 		return xerrors.Errorf("測試 Streaming 的接收效能失敗: %w", err)
 	}
 
@@ -46,10 +56,10 @@ func TestStreamingPerformance() error {
 }
 
 // TestStreamingPublish 測試 Streaming 發布效能
-func TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel string) error {
+func (tester *streamingPerformanceTester) TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel string) error {
 	fmt.Println("\n開始測試 Streaming 的發布效能")
 	now := time.Now()
-	for i := 0; i < conf.Testers.StreamingPerformanceTest.Times; i++ {
+	for i := 0; i < conf.Testers.StreamingPerformanceTester.Times; i++ {
 		err := stanConn.Publish(channel, []byte(fmt.Sprintf("%d", i)))
 		if err != nil {
 			return xerrors.Errorf("發布 %s 失敗: %w", channel, err)
@@ -58,15 +68,15 @@ func TestStreamingPublish(conf *config.Config, stanConn stan.Conn, channel strin
 	}
 	elapsedTime := time.Since(now)
 	fmt.Printf("全部 %d 筆發布花費時間 %v (每筆平均花費 %v)\n",
-		conf.Testers.StreamingPerformanceTest.Times,
+		conf.Testers.StreamingPerformanceTester.Times,
 		elapsedTime,
-		elapsedTime/time.Duration(conf.Testers.StreamingPerformanceTest.Times),
+		elapsedTime/time.Duration(conf.Testers.StreamingPerformanceTester.Times),
 	)
 	return nil
 }
 
 // TestStreamingSubscribe 測試 Streaming 訂閱效能
-func TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel string) error {
+func (tester *streamingPerformanceTester) TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel string) error {
 	fmt.Println("\n開始測試 Streaming 的接收效能")
 
 	now := time.Now()
@@ -75,7 +85,7 @@ func TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel str
 	if _, err := stanConn.Subscribe(channel, func(msg *stan.Msg) {
 		// fmt.Printf("Received a Streaming message: %s\n", string(msg.Data))
 
-		if atomic.AddInt32(&counter, 1) == int32(conf.Testers.StreamingPerformanceTest.Times) {
+		if atomic.AddInt32(&counter, 1) == int32(conf.Testers.StreamingPerformanceTester.Times) {
 			quit <- 1
 		}
 	}, stan.StartAt(pb.StartPosition_First)); err != nil {
@@ -85,15 +95,9 @@ func TestStreamingSubscribe(conf *config.Config, stanConn stan.Conn, channel str
 	<-quit
 	elapsedTime := time.Since(now)
 	fmt.Printf("全部 %d 筆接收花費時間 %v (每筆平均花費 %v)\n",
-		conf.Testers.StreamingPerformanceTest.Times,
+		conf.Testers.StreamingPerformanceTester.Times,
 		elapsedTime,
-		elapsedTime/time.Duration(conf.Testers.StreamingPerformanceTest.Times),
+		elapsedTime/time.Duration(conf.Testers.StreamingPerformanceTester.Times),
 	)
 	return nil
-}
-
-func main() {
-	if err := TestStreamingPerformance(); err != nil {
-		log.Fatal(err)
-	}
 }
