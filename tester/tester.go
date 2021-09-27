@@ -22,12 +22,13 @@ func RunTesters() error {
 	testers := []ITester{
 		NewStreamingPublishTester(conf),
 		NewStreamingSubscribeTester(conf),
-		NewJetStreamPurgeStreamTester(conf),
-		NewJetStreamMemoryStorageTester(conf),
 		NewJetStreamPublishTester(conf),
+		NewJetStreamAsyncPublishTester(conf),
 		NewJetStreamSubscribeTester(conf),
 		NewJetStreamChanSubscribeTester(conf),
 		NewJetStreamPullSubscribeTester(conf),
+		NewJetStreamPurgeStreamTester(conf),
+		NewJetStreamMemoryStorageTester(conf),
 	}
 
 	for _, tester := range testers {

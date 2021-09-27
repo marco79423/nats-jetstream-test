@@ -47,12 +47,46 @@ func PublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subjec
 	return nil
 }
 
+// AsyncPublishJetStreamMessagesWithSize 發布大量訊息 Async (Subject, 數量)
+func AsyncPublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
+	message := GenerateRandomString(messageSize)
+	for i := 0; i < times; i++ {
+		if _, err := jetStreamCtx.PublishAsync(subject, []byte(message)); err != nil {
+			return xerrors.Errorf("發布大量訊息 (Subject: %s, 數量： %d): %w", subject, times, err)
+		}
+		// fmt.Println(i)
+	}
+
+	<-jetStreamCtx.PublishAsyncComplete()
+	return nil
+}
+
 // MeasureJetStreamPublishMsgTime 測試 JetStream 發布效能
 func MeasureJetStreamPublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
 	fmt.Println("開始測試 JetStream 的發布效能")
 
 	now := time.Now()
 	if err := PublishJetStreamMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
+		return xerrors.Errorf("測量 JetStream 發布訊息所需的時間失敗: %w", subject, err)
+	}
+	elapsedTime := time.Since(now)
+
+	fmt.Printf("全部 %d 筆發布花費時間 %v (訊息大小： %v, 每筆平均花費 %v)\n",
+		times,
+		elapsedTime,
+		messageSize,
+		elapsedTime/time.Duration(times),
+	)
+
+	return nil
+}
+
+// MeasureJetStreamAsyncPublishMsgTime 測試 JetStream 發布效能 (Async)
+func MeasureJetStreamAsyncPublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
+	fmt.Println("開始測試 JetStream 的發布效能 (Async)")
+
+	now := time.Now()
+	if err := AsyncPublishJetStreamMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測量 JetStream 發布訊息所需的時間失敗: %w", subject, err)
 	}
 	elapsedTime := time.Since(now)

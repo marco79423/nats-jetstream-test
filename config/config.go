@@ -43,6 +43,7 @@ type Testers struct {
 	JetStreamPurgeStreamTester   *JetStreamPurgeStreamTesterConfig   `mapstructure:"jetstream_purge_stream_tester"`
 	JetStreamMemoryStorageTester *JetStreamMemoryStorageTesterConfig `mapstructure:"jetstream_memory_storage_tester"`
 	JetStreamPublishTester       *JetStreamPublishTesterConfig       `mapstructure:"jetstream_publish_tester"`
+	JetStreamAsyncPublishTester  *JetStreamAsyncPublishTesterConfig  `mapstructure:"jetstream_async_publish_tester"`
 	JetStreamSubscribeTester     *JetStreamSubscribeTesterConfig     `mapstructure:"jetstream_subscribe_tester"`
 	JetStreamChanSubscribeTester *JetStreamChanSubscribeTesterConfig `mapstructure:"jetstream_chan_subscribe_tester"`
 	JetStreamPullSubscribeTester *JetStreamPullSubscribeTesterConfig `mapstructure:"jetstream_pull_subscribe_tester"`
@@ -61,6 +62,13 @@ type StreamingSubscribeTesterConfig struct {
 }
 
 type JetStreamPublishTesterConfig struct {
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
+}
+
+type JetStreamAsyncPublishTesterConfig struct {
 	Stream      string `mapstructure:"stream"`
 	Subject     string `mapstructure:"subject"`
 	Times       int    `mapstructure:"times"`

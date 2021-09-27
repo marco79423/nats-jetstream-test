@@ -11,7 +11,7 @@ nats_jet_stream:
   token: ''
 
 testers:
-  # Streaming ªºµo¥¬©M±µ¦¬®Ä¯à´ú¸Õ
+  # Streaming çš„ç™¼å¸ƒå’ŒæŽ¥æ”¶æ•ˆèƒ½æ¸¬è©¦
   streaming_publish_tester:
     channel: test_streaming_performance
     times: 100
@@ -22,8 +22,14 @@ testers:
     times: 100
     message_size: 1
 
-  # JetStream ªºµo¥¬©M±µ¦¬®Ä¯à´ú¸Õ
+  # JetStream çš„ç™¼å¸ƒå’ŒæŽ¥æ”¶æ•ˆèƒ½æ¸¬è©¦
   jetstream_publish_tester:
+    stream: ray
+    subject: ray.fuck
+    times: 100
+    message_size: 8
+
+  jetstream_async_publish_tester:
     stream: ray
     subject: ray.fuck
     times: 100
@@ -51,7 +57,7 @@ testers:
       - 100
     message_size: 8
 
-  # JetStream ´ú¸Õ®Ä¯à´ú¸Õ
+  # JetStream æ¸¬è©¦æ•ˆèƒ½æ¸¬è©¦
   jetstream_purge_stream_tester:
     stream: test_jetstream_purge_stream
     subject: test_jetstream_purge_stream
@@ -60,7 +66,7 @@ testers:
       - 1000
     message_size: 1
 
-  # JetStream FileStoarge ©M MemoryStorage ®Ä¯à¤ñ¸û
+  # JetStream FileStorage å’Œ MemoryStorage æ•ˆèƒ½æ¯”è¼ƒ
   jetstream_memory_storage_tester:
     stream: test_jetstream_memory_storage
     subject: test_jetstream_memory_storage
