@@ -13,12 +13,14 @@ nats_jet_stream:
 testers:
   streaming_performance_tester:
     channel: test_streaming_performance
-    times: 1000
+    times: 100
+    message_size: 1
 
   jetstream_performance_tester:
     stream: ray
     subject: ray.fuck
     times: 100
+    message_size: 1
 
   jetstream_purge_stream_tester:
     stream: test_jetstream_purge_stream
@@ -26,10 +28,11 @@ testers:
     counts:
       - 100
       - 1000
+    message_size: 1
 
   jetstream_memory_storage_tester:
     stream: test_jetstream_memory_storage
     subject: test_jetstream_memory_storage
     times: 100
-
+    message_size: 10
 

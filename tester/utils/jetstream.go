@@ -35,10 +35,10 @@ func RecreateStreamIfExists(js nats.JetStreamContext, config *nats.StreamConfig)
 	return stream, nil
 }
 
-// PublishMassiveMessages 發布大量訊息 (Subject, 數量)
-func PublishMassiveMessages(jetStreamCtx nats.JetStreamContext, subject string, times int) error {
+// PublishMessagesWithSize 發布大量訊息 (Subject, 數量)
+func PublishMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
+	message := GenerateRandomString(messageSize)
 	for i := 0; i < times; i++ {
-		message := fmt.Sprintf("%d", i)
 		if _, err := jetStreamCtx.Publish(subject, []byte(message)); err != nil {
 			return xerrors.Errorf("發布大量訊息 (Subject: %s, 數量： %d): %w", subject, times, err)
 		}
@@ -48,19 +48,20 @@ func PublishMassiveMessages(jetStreamCtx nats.JetStreamContext, subject string, 
 }
 
 // MeasurePublishMsgTime 測試 JetStream 發布效能
-func MeasurePublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, count int) error {
+func MeasurePublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
 	fmt.Println("\n開始測試 JetStream 的發布效能")
 
 	now := time.Now()
-	if err := PublishMassiveMessages(jetStreamCtx, subject, count); err != nil {
+	if err := PublishMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測量 JetStream 發布訊息所需的時間失敗: %w", subject, err)
 	}
 	elapsedTime := time.Since(now)
 
-	fmt.Printf("全部 %d 筆發布花費時間 %v (每筆平均花費 %v)\n",
-		count,
+	fmt.Printf("全部 %d 筆發布花費時間 %v (訊息大小： %v, 每筆平均花費 %v)\n",
+		times,
 		elapsedTime,
-		elapsedTime/time.Duration(count),
+		messageSize,
+		elapsedTime/time.Duration(times),
 	)
 
 	return nil

@@ -41,15 +41,16 @@ func (tester *jetStreamPerformanceTester) Test() error {
 		return xerrors.Errorf("取得 JetStream 的 Context 失敗: %w", err)
 	}
 
-	// JetStream 需要顯示管理 Stream
 	streamName := tester.conf.Testers.JetStreamPerformanceTester.Stream
 	subject := tester.conf.Testers.JetStreamPerformanceTester.Subject
 	times := tester.conf.Testers.JetStreamPerformanceTester.Times
+	messageSize := tester.conf.Testers.JetStreamPerformanceTester.MessageSize
 	fmt.Printf("Stream: %s\n", streamName)
 	fmt.Printf("Subject: %s\n", subject)
 	fmt.Printf("Times: %d\n", times)
+	fmt.Printf("MessageSize: %d\n", messageSize)
 
-	// 重建 Stream 測試用
+	// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
 	if _, err := utils.RecreateStreamIfExists(js, &nats.StreamConfig{
 		Name: streamName,
 		Subjects: []string{
@@ -60,7 +61,7 @@ func (tester *jetStreamPerformanceTester) Test() error {
 	}
 
 	// 測量 JetStream 發布效能
-	if err := utils.MeasurePublishMsgTime(js, subject, times); err != nil {
+	if err := utils.MeasurePublishMsgTime(js, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測試 JetStream 的發布效能失敗: %w", err)
 	}
 

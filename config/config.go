@@ -45,28 +45,31 @@ type Testers struct {
 }
 
 type StreamingPerformanceTesterConfig struct {
-	Channel string `mapstructure:"channel"`
-	Times   int    `mapstructure:"times"`
+	Channel     string `mapstructure:"channel"`
+	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
 }
 
 type JetStreamPerformanceTesterConfig struct {
-	Stream  string `mapstructure:"stream"`
-	Subject string `mapstructure:"subject"`
-	Times   int    `mapstructure:"times"`
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
 }
 
 type JetStreamPurgeStreamTesterConfig struct {
-	Stream  string `mapstructure:"stream"`
-	Subject string `mapstructure:"subject"`
-	Counts  []int  `mapstructure:"counts"`
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Counts      []int  `mapstructure:"counts"`
+	MessageSize int    `mapstructure:"message_size"`
 }
 
 type JetStreamMemoryStorageTesterConfig struct {
-	Stream  string `mapstructure:"stream"`
-	Subject string `mapstructure:"subject"`
-	Times   int    `mapstructure:"times"`
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
 }
-
 
 // loadConfig 讀取設定檔
 func loadConfig(rawConfig interface{}, configPath string) error {
