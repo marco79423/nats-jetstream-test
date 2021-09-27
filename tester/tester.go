@@ -20,7 +20,8 @@ func RunTesters() error {
 	}
 
 	testers := []ITester{
-		NewStreamingPerformanceTester(conf),
+		NewStreamingPublishTester(conf),
+		NewStreamingSubscribeTester(conf),
 		NewJetStreamPurgeStreamTester(conf),
 		NewJetStreamMemoryStorageTester(conf),
 		NewJetStreamPublishTester(conf),

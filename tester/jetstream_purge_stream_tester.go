@@ -34,6 +34,7 @@ func (tester *jetStreamPurgeStreamTester) Test() error {
 	if err != nil {
 		return xerrors.Errorf("取得 NATS 連線失敗: %w", err)
 	}
+	defer natsConn.Close()
 
 	// 取得 JetStream 的 Context
 	js, err := natsConn.JetStream()

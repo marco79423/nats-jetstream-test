@@ -33,6 +33,7 @@ func (tester *jetStreamMemoryStorageTester) Test() error {
 	if err != nil {
 		return xerrors.Errorf("取得 NATS 連線失敗: %w", err)
 	}
+	defer natsConn.Close()
 
 	// 取得 JetStream 的 Context
 	js, err := natsConn.JetStream()
@@ -46,7 +47,7 @@ func (tester *jetStreamMemoryStorageTester) Test() error {
 	times := tester.conf.Testers.JetStreamMemoryStorageTester.Times
 	messageSize := tester.conf.Testers.JetStreamMemoryStorageTester.MessageSize
 	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d\n", streamName, subject, times, messageSize)
-	
+
 	if err := tester.TestJetStreamMemoryStoragePerformance(js, streamName, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測試 JetStream MemoryStorage 的效能: %w", err)
 	}

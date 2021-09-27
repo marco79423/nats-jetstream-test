@@ -11,11 +11,18 @@ nats_jet_stream:
   token: ''
 
 testers:
-  streaming_performance_tester:
+  # Streaming 的發布和接收效能測試
+  streaming_publish_tester:
     channel: test_streaming_performance
     times: 100
     message_size: 1
 
+  streaming_subscribe_tester:
+    channel: test_streaming_performance
+    times: 100
+    message_size: 1
+
+  # JetStream 的發布和接收效能測試
   jetstream_publish_tester:
     stream: ray
     subject: ray.fuck
@@ -44,6 +51,7 @@ testers:
       - 100
     message_size: 8
 
+  # JetStream 測試效能測試
   jetstream_purge_stream_tester:
     stream: test_jetstream_purge_stream
     subject: test_jetstream_purge_stream
@@ -52,6 +60,7 @@ testers:
       - 1000
     message_size: 1
 
+  # JetStream FileStoarge 和 MemoryStorage 效能比較
   jetstream_memory_storage_tester:
     stream: test_jetstream_memory_storage
     subject: test_jetstream_memory_storage

@@ -18,9 +18,6 @@ func ConnectNATS(conf *config.Config, name string) (*nats.Conn, error) {
 		nats.Token(conf.NATSJetStream.Token),
 
 		nats.MaxReconnects(-1),
-		nats.DisconnectErrHandler(func(conn *nats.Conn, err error) {
-			fmt.Printf("%+v\n", xerrors.Errorf("NATS 斷線了: %w", err))
-		}),
 		nats.ReconnectHandler(func(conn *nats.Conn) {
 			fmt.Println("NATS 重連成功")
 		}),
