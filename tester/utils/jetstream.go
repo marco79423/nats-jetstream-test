@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -105,18 +106,16 @@ func MeasureJetStreamAsyncPublishMsgTime(jetStreamCtx nats.JetStreamContext, sub
 func MeasureJetStreamSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
 	fmt.Println("開始測量 JetStream (Subscribe) 的接收效能")
 
+	wg := sync.WaitGroup{}
+	wg.Add(messageCount)
 	now := time.Now()
-	quit := make(chan int)
 	if _, err := jetStreamCtx.Subscribe(subject, func(msg *nats.Msg) {
 		// fmt.Printf("Received a JetStream message: %s\n", string(msg.Data))
-		quit <- 1
+		wg.Done()
 	}); err != nil {
 		return xerrors.Errorf("訂閱 %s 失敗: %w", subject, err)
 	}
-
-	for i := 0; i < messageCount; i++ {
-		<-quit
-	}
+	wg.Wait()
 
 	elapsedTime := time.Since(now)
 	fmt.Printf("全部 %d 筆接收花費時間 %v (每筆平均花費 %v)\n",

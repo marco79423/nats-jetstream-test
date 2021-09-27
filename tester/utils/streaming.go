@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/nats-io/stan.go"
@@ -46,18 +47,17 @@ func MeasureStreamingSubscribeTime(stanConn stan.Conn, channel string, times int
 	fmt.Println("開始測量 Streaming 的接收效能")
 
 	now := time.Now()
-	quit := make(chan int)
 
+	wg := sync.WaitGroup{}
+	wg.Add(times)
 	if _, err := stanConn.Subscribe(channel, func(msg *stan.Msg) {
 		// fmt.Printf("Received a Streaming message: %s\n", string(msg.Data))
-		quit <- 1
+		wg.Done()
 	}, stan.StartAt(pb.StartPosition_First)); err != nil {
 		return xerrors.Errorf("訂閱 %s 失敗: %w", channel, err)
 	}
 
-	for i := 0; i < times; i++ {
-		<-quit
-	}
+	wg.Wait()
 
 	elapsedTime := time.Since(now)
 	fmt.Printf("全部 %d 筆接收花費時間 %v (每筆平均花費 %v)\n",
