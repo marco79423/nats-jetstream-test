@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/marco79423/nats-jetstream-test/config"
@@ -15,6 +16,17 @@ func ConnectNATS(conf *config.Config, name string) (*nats.Conn, error) {
 		strings.Join(conf.NATSJetStream.Servers, ","),
 		nats.Name(name),
 		nats.Token(conf.NATSJetStream.Token),
+
+		nats.MaxReconnects(-1),
+		nats.DisconnectErrHandler(func(conn *nats.Conn, err error) {
+			fmt.Printf("%+v\n", xerrors.Errorf("NATS 斷線了: %w", err))
+		}),
+		nats.ReconnectHandler(func(conn *nats.Conn) {
+			fmt.Println("NATS 重連成功")
+		}),
+		nats.ErrorHandler(func(conn *nats.Conn, subscription *nats.Subscription, err error) {
+			fmt.Println("NATS 連線錯誤: %w", err)
+		}),
 	)
 	if err != nil {
 		return nil, xerrors.Errorf("取得 NATS 連線失敗: %w", err)
