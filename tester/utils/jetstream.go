@@ -8,7 +8,7 @@ import (
 	"golang.org/x/xerrors"
 )
 
-func RecreateStreamIfExists(js nats.JetStreamContext, config *nats.StreamConfig) (*nats.StreamInfo, error) {
+func RecreateJetStreamStreamIfExists(js nats.JetStreamContext, config *nats.StreamConfig) (*nats.StreamInfo, error) {
 	streamName := config.Name
 
 	// 可透過 StreamInfo 確認 Stream 是否存在
@@ -35,8 +35,8 @@ func RecreateStreamIfExists(js nats.JetStreamContext, config *nats.StreamConfig)
 	return stream, nil
 }
 
-// PublishMessagesWithSize 發布大量訊息 (Subject, 數量)
-func PublishMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
+// PublishJetStreamMessagesWithSize 發布大量訊息 (Subject, 數量)
+func PublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
 	message := GenerateRandomString(messageSize)
 	for i := 0; i < times; i++ {
 		if _, err := jetStreamCtx.Publish(subject, []byte(message)); err != nil {
@@ -47,12 +47,12 @@ func PublishMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string,
 	return nil
 }
 
-// MeasurePublishMsgTime 測試 JetStream 發布效能
-func MeasurePublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
+// MeasureJetStreamPublishMsgTime 測試 JetStream 發布效能
+func MeasureJetStreamPublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
 	fmt.Println("開始測試 JetStream 的發布效能")
 
 	now := time.Now()
-	if err := PublishMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
+	if err := PublishJetStreamMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測量 JetStream 發布訊息所需的時間失敗: %w", subject, err)
 	}
 	elapsedTime := time.Since(now)
@@ -67,8 +67,8 @@ func MeasurePublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, t
 	return nil
 }
 
-// MeasureSubscribeTime 測量 JetStream 訂閱效能 (Subscribe)
-func MeasureSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
+// MeasureJetStreamSubscribeTime 測量 JetStream 訂閱效能 (Subscribe)
+func MeasureJetStreamSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
 	fmt.Println("開始測量 JetStream (Subscribe) 的接收效能")
 
 	now := time.Now()
@@ -93,8 +93,8 @@ func MeasureSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, me
 	return nil
 }
 
-// MeasureChanSubscribeTime 測量 JetStream 訂閱效能 (Chan Subscribe)
-func MeasureChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
+// MeasureJetStreamChanSubscribeTime 測量 JetStream 訂閱效能 (Chan Subscribe)
+func MeasureJetStreamChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
 	fmt.Println("開始測量 JetStream (Chan Subscribe) 的接收效能")
 
 	now := time.Now()
@@ -123,8 +123,8 @@ func MeasureChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string
 	return nil
 }
 
-// MeasurePullSubscribeTime 測量 JetStream 訂閱效能 (Pull Subscribe)
-func MeasurePullSubscribeTime(jetStreamCtx nats.JetStreamContext, durableName, subject string, messageCount, fetchCount int) error {
+// MeasureJetStreamPullSubscribeTime 測量 JetStream 訂閱效能 (Pull Subscribe)
+func MeasureJetStreamPullSubscribeTime(jetStreamCtx nats.JetStreamContext, durableName, subject string, messageCount, fetchCount int) error {
 	fmt.Println("開始測量 JetStream (Pull Subscribe) 的接收效能")
 
 	now := time.Now()

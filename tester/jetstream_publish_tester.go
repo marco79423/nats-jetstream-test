@@ -46,7 +46,7 @@ func (tester *jetStreamPublishTester) Test() error {
 	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d\n", streamName, subject, times, messageSize)
 
 	// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
-	if _, err := utils.RecreateStreamIfExists(js, &nats.StreamConfig{
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
 		Name: streamName,
 		Subjects: []string{
 			subject,
@@ -56,7 +56,7 @@ func (tester *jetStreamPublishTester) Test() error {
 	}
 
 	// 測量 JetStream 發布效能
-	if err := utils.MeasurePublishMsgTime(js, subject, times, messageSize); err != nil {
+	if err := utils.MeasureJetStreamPublishMsgTime(js, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測試 JetStream 的發布效能失敗: %w", err)
 	}
 

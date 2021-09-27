@@ -46,7 +46,7 @@ func (tester *jetStreamChanSubscribeTester) Test() error {
 	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d\n", streamName, subject, times, messageSize)
 
 	// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
-	if _, err := utils.RecreateStreamIfExists(js, &nats.StreamConfig{
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
 		Name: streamName,
 		Subjects: []string{
 			subject,
@@ -56,12 +56,12 @@ func (tester *jetStreamChanSubscribeTester) Test() error {
 	}
 
 	// 發布大量訊息
-	if err := utils.PublishMessagesWithSize(js, subject, times, messageSize); err != nil {
+	if err := utils.PublishJetStreamMessagesWithSize(js, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("發布大量訊息失敗: %w", subject, err)
 	}
 
 	// 測量 JetStream 訂閱效能 (Chan Subscribe)
-	if err := utils.MeasureChanSubscribeTime(js, subject, times); err != nil {
+	if err := utils.MeasureJetStreamChanSubscribeTime(js, subject, times); err != nil {
 		return xerrors.Errorf("測試 JetStream 的接收效能失敗: %w", err)
 	}
 

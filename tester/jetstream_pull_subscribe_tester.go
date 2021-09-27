@@ -49,7 +49,7 @@ func (tester *jetStreamPullSubscribeTester) Test() error {
 	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d, fetchCounts: %v\n", streamName, subject, times, messageSize, fetchCounts)
 
 	// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
-	if _, err := utils.RecreateStreamIfExists(js, &nats.StreamConfig{
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
 		Name: streamName,
 		Subjects: []string{
 			subject,
@@ -59,7 +59,7 @@ func (tester *jetStreamPullSubscribeTester) Test() error {
 	}
 
 	// 發布大量訊息
-	if err := utils.PublishMessagesWithSize(js, subject, times, messageSize); err != nil {
+	if err := utils.PublishJetStreamMessagesWithSize(js, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("發布大量訊息失敗: %w", subject, err)
 	}
 
@@ -67,7 +67,7 @@ func (tester *jetStreamPullSubscribeTester) Test() error {
 	rand.Seed(time.Now().UnixNano())
 	for idx, fetchCount := range fetchCounts {
 		durableName := fmt.Sprintf("ray-jetstream-performance-%d", fetchCount)
-		if err := utils.MeasurePullSubscribeTime(js, durableName, subject, times, fetchCount); err != nil {
+		if err := utils.MeasureJetStreamPullSubscribeTime(js, durableName, subject, times, fetchCount); err != nil {
 			return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
 		}
 

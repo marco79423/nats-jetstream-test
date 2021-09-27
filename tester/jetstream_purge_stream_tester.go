@@ -45,10 +45,7 @@ func (tester *jetStreamPurgeStreamTester) Test() error {
 	subject := tester.conf.Testers.JetStreamPurgeStreamTester.Subject
 	counts := tester.conf.Testers.JetStreamPurgeStreamTester.Counts
 	messageSize := tester.conf.Testers.JetStreamPurgeStreamTester.MessageSize
-	fmt.Printf("Stream: %s\n", streamName)
-	fmt.Printf("Subject: %s\n", subject)
-	fmt.Printf("Counts: %v\n", counts)
-	fmt.Printf("MessageSize: %d\n", messageSize)
+	fmt.Printf("Stream: %s, Subject: %s, Counts: %d, MessageSize: %d\n", streamName, subject, counts, messageSize)
 
 	for _, count := range counts {
 		if err := tester.MeasurePurgeStreamTime(js, streamName, subject, count, messageSize); err != nil {
@@ -63,7 +60,7 @@ func (tester *jetStreamPurgeStreamTester) MeasurePurgeStreamTime(js nats.JetStre
 	fmt.Printf("\n開始測試 JetStream 的 Purge Stream (%d 筆) 的效能\n", count)
 
 	// 重建 Stream
-	if _, err := utils.RecreateStreamIfExists(js, &nats.StreamConfig{
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
 		Name: streamName,
 		Subjects: []string{
 			subject,
@@ -73,7 +70,7 @@ func (tester *jetStreamPurgeStreamTester) MeasurePurgeStreamTime(js nats.JetStre
 	}
 
 	// 發布足夠的訊息
-	if err := utils.PublishMessagesWithSize(js, subject, count, messageSize); err != nil {
+	if err := utils.PublishJetStreamMessagesWithSize(js, subject, count, messageSize); err != nil {
 		return xerrors.Errorf("測量 JetStream 發布訊息所需的時間失敗: %w", err)
 	}
 
