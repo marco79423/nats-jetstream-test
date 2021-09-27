@@ -16,11 +16,33 @@ testers:
     times: 100
     message_size: 1
 
-  jetstream_performance_tester:
+  jetstream_publish_tester:
     stream: ray
     subject: ray.fuck
     times: 100
-    message_size: 1
+    message_size: 8
+
+  jetstream_subscribe_tester:
+    stream: ray
+    subject: ray.fuck
+    times: 100
+    message_size: 8
+
+  jetstream_chan_subscribe_tester:
+    stream: ray
+    subject: ray.fuck
+    times: 100
+    message_size: 8
+
+  jetstream_pull_subscribe_tester:
+    stream: ray
+    subject: ray.fuck
+    times: 100
+    fetch_counts:
+      - 1
+      - 10
+      - 100
+    message_size: 8
 
   jetstream_purge_stream_tester:
     stream: test_jetstream_purge_stream
@@ -35,4 +57,3 @@ testers:
     subject: test_jetstream_memory_storage
     times: 100
     message_size: 10
-

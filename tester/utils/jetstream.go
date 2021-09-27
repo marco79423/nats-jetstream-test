@@ -49,7 +49,7 @@ func PublishMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string,
 
 // MeasurePublishMsgTime 測試 JetStream 發布效能
 func MeasurePublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
-	fmt.Println("\n開始測試 JetStream 的發布效能")
+	fmt.Println("開始測試 JetStream 的發布效能")
 
 	now := time.Now()
 	if err := PublishMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
@@ -69,7 +69,7 @@ func MeasurePublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, t
 
 // MeasureSubscribeTime 測量 JetStream 訂閱效能 (Subscribe)
 func MeasureSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
-	fmt.Println("\n開始測量 JetStream (Subscribe) 的接收效能")
+	fmt.Println("開始測量 JetStream (Subscribe) 的接收效能")
 
 	now := time.Now()
 	quit := make(chan int)
@@ -95,7 +95,7 @@ func MeasureSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, me
 
 // MeasureChanSubscribeTime 測量 JetStream 訂閱效能 (Chan Subscribe)
 func MeasureChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
-	fmt.Println("\n開始測量 JetStream (Chan Subscribe) 的接收效能")
+	fmt.Println("開始測量 JetStream (Chan Subscribe) 的接收效能")
 
 	now := time.Now()
 	msgChan := make(chan *nats.Msg, 10000)
@@ -123,9 +123,9 @@ func MeasureChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string
 	return nil
 }
 
-// MeasureChanPullSubscribeTime 測量 JetStream 訂閱效能 (Pull Subscribe)
-func MeasureChanPullSubscribeTime(jetStreamCtx nats.JetStreamContext, durableName, subject string, messageCount, fetchCount int) error {
-	fmt.Println("\n開始測量 JetStream (Pull Subscribe) 的接收效能")
+// MeasurePullSubscribeTime 測量 JetStream 訂閱效能 (Pull Subscribe)
+func MeasurePullSubscribeTime(jetStreamCtx nats.JetStreamContext, durableName, subject string, messageCount, fetchCount int) error {
+	fmt.Println("開始測量 JetStream (Pull Subscribe) 的接收效能")
 
 	now := time.Now()
 	sub, err := jetStreamCtx.PullSubscribe(subject, durableName)

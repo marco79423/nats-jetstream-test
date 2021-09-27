@@ -42,11 +42,44 @@ type Testers struct {
 	JetStreamPurgeStreamTester   *JetStreamPurgeStreamTesterConfig   `mapstructure:"jetstream_purge_stream_tester"`
 	JetStreamMemoryStorageTester *JetStreamMemoryStorageTesterConfig `mapstructure:"jetstream_memory_storage_tester"`
 	JetStreamPerformanceTester   *JetStreamPerformanceTesterConfig   `mapstructure:"jetstream_performance_tester"`
+	JetStreamPublishTester       *JetStreamPublishTesterConfig       `mapstructure:"jetstream_publish_tester"`
+	JetStreamSubscribeTester     *JetStreamSubscribeTesterConfig     `mapstructure:"jetstream_subscribe_tester"`
+	JetStreamChanSubscribeTester *JetStreamChanSubscribeTesterConfig `mapstructure:"jetstream_chan_subscribe_tester"`
+	JetStreamPullSubscribeTester *JetStreamPullSubscribeTesterConfig `mapstructure:"jetstream_pull_subscribe_tester"`
 }
 
 type StreamingPerformanceTesterConfig struct {
 	Channel     string `mapstructure:"channel"`
 	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
+}
+
+type JetStreamPublishTesterConfig struct {
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
+}
+
+type JetStreamSubscribeTesterConfig struct {
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
+}
+
+type JetStreamChanSubscribeTesterConfig struct {
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Times       int    `mapstructure:"times"`
+	MessageSize int    `mapstructure:"message_size"`
+}
+
+type JetStreamPullSubscribeTesterConfig struct {
+	Stream      string `mapstructure:"stream"`
+	Subject     string `mapstructure:"subject"`
+	Times       int    `mapstructure:"times"`
+	FetchCounts []int  `mapstructure:"fetch_counts"`
 	MessageSize int    `mapstructure:"message_size"`
 }
 

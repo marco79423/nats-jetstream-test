@@ -23,7 +23,10 @@ func RunTesters() error {
 		NewStreamingPerformanceTester(conf),
 		NewJetStreamPurgeStreamTester(conf),
 		NewJetStreamMemoryStorageTester(conf),
-		NewJetStreamPerformanceTester(conf),
+		NewJetStreamPublishTester(conf),
+		NewJetStreamSubscribeTester(conf),
+		NewJetStreamChanSubscribeTester(conf),
+		NewJetStreamPullSubscribeTester(conf),
 	}
 
 	for _, tester := range testers {
@@ -31,11 +34,11 @@ func RunTesters() error {
 			continue
 		}
 
-		fmt.Printf("======== 開始測試 %s ========\n\n", tester.Name())
+		fmt.Printf("======== 開始 %s ========\n", tester.Name())
 		if err := tester.Test(); err != nil {
 			return xerrors.Errorf("測試 %s 失敗: %w", tester.Name(), err)
 		}
-		fmt.Printf("\n======== 結束測試 %s ========\n\n", tester.Name())
+		fmt.Printf("======== 結束 %s ========\n\n", tester.Name())
 	}
 
 	return nil
