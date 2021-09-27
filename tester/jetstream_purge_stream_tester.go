@@ -21,12 +21,12 @@ type jetStreamPurgeStreamTester struct {
 	conf *config.Config
 }
 
-func (tester *jetStreamPurgeStreamTester) Enabled() bool {
-	return tester.conf.Testers.JetStreamPurgeStreamTester != nil
-}
-
 func (tester *jetStreamPurgeStreamTester) Name() string {
 	return "測試 JetStream Purge Stream 的效能"
+}
+
+func (tester *jetStreamPurgeStreamTester) Key() string {
+	return "jetstream_purge_stream_tester"
 }
 
 func (tester *jetStreamPurgeStreamTester) Test() error {

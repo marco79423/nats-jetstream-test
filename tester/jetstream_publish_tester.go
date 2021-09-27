@@ -19,12 +19,12 @@ type jetStreamPublishTester struct {
 	conf *config.Config
 }
 
-func (tester *jetStreamPublishTester) Enabled() bool {
-	return tester.conf.Testers.JetStreamPublishTester != nil
-}
-
 func (tester *jetStreamPublishTester) Name() string {
 	return "測試 JetStream 的發布效能"
+}
+
+func (tester *jetStreamPublishTester) Key() string {
+	return "jetstream_publish_tester"
 }
 
 func (tester *jetStreamPublishTester) Test() error {

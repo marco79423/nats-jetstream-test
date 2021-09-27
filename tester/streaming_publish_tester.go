@@ -20,12 +20,12 @@ type streamingPublishTester struct {
 	conf *config.Config
 }
 
-func (tester *streamingPublishTester) Enabled() bool {
-	return tester.conf.Testers.StreamingPublishTester != nil
-}
-
 func (tester *streamingPublishTester) Name() string {
 	return "測試 Streaming 的發布效能"
+}
+
+func (tester *streamingPublishTester) Key() string {
+	return "streaming_publish_tester"
 }
 
 func (tester *streamingPublishTester) Test() error {

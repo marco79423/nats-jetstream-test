@@ -10,6 +10,26 @@ nats_jet_stream:
     - nats://localhost:4222
   token: ''
 
+enabled_testers:
+  # Streaming 的發布和接收效能測試
+  - streaming_publish_tester
+  - streaming_subscribe_tester
+
+  # JetStream 的發布效能測試
+  - jetstream_publish_tester
+  - jetstream_async_publish_tester
+
+  # JetStream 的訂閱效能測試
+  - jetstream_subscribe_tester
+  - jetstream_chan_subscribe_tester
+  - jetstream_pull_subscribe_tester
+
+  # JetStream 測試清除效能測試
+  - jetstream_purge_stream_tester
+
+  # JetStream FileStorage 和 MemoryStorage 效能比較
+  - jetstream_memory_storage_tester
+
 testers:
   # Streaming 的發布和接收效能測試
   streaming_publish_tester:
@@ -22,7 +42,7 @@ testers:
     times: 100
     message_size: 1
 
-  # JetStream 的發布和接收效能測試
+  # JetStream 的發布效能測試
   jetstream_publish_tester:
     stream: ray
     subject: ray.fuck
@@ -35,6 +55,7 @@ testers:
     times: 100
     message_size: 8
 
+  # JetStream 的訂閱效能測試
   jetstream_subscribe_tester:
     stream: ray
     subject: ray.fuck
@@ -57,7 +78,7 @@ testers:
       - 100
     message_size: 8
 
-  # JetStream 測試效能測試
+  # JetStream 測試清除效能測試
   jetstream_purge_stream_tester:
     stream: test_jetstream_purge_stream
     subject: test_jetstream_purge_stream

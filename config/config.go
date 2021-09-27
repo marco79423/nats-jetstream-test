@@ -22,7 +22,8 @@ type Config struct {
 	NATSStreaming NATSStreamingConfig `mapstructure:"nats_streaming"`
 	NATSJetStream NATSJetStreamConfig `mapstructure:"nats_jet_stream"`
 
-	Testers Testers `mapstructure:"testers"`
+	EnabledTesters []string `mapstructure:"enabled_testers"`
+	Testers       Testers  `mapstructure:"testers"`
 }
 
 type NATSStreamingConfig struct {

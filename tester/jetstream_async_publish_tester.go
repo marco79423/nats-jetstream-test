@@ -19,12 +19,12 @@ type jetStreamAsyncPublishTester struct {
 	conf *config.Config
 }
 
-func (tester *jetStreamAsyncPublishTester) Enabled() bool {
-	return tester.conf.Testers.JetStreamPublishTester != nil
-}
-
 func (tester *jetStreamAsyncPublishTester) Name() string {
 	return "測試 JetStream 的發布效能 (Async)"
+}
+
+func (tester *jetStreamAsyncPublishTester) Key() string {
+	return "jetstream_async_publish_tester"
 }
 
 func (tester *jetStreamAsyncPublishTester) Test() error {

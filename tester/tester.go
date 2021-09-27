@@ -8,8 +8,8 @@ import (
 )
 
 type ITester interface {
-	Enabled() bool
 	Name() string
+	Key() string
 	Test() error
 }
 
@@ -31,16 +31,18 @@ func RunTesters() error {
 		NewJetStreamMemoryStorageTester(conf),
 	}
 
-	for _, tester := range testers {
-		if !tester.Enabled() {
-			continue
-		}
+	for idx, testerKey := range conf.EnabledTesters {
+		for _, tester := range testers {
+			if tester.Key() == testerKey {
+				fmt.Printf("======== [%d] 開始 %s ========\n", idx+1, tester.Name())
+				if err := tester.Test(); err != nil {
+					return xerrors.Errorf("測試 %s 失敗: %w", tester.Name(), err)
+				}
+				fmt.Printf("======== [%d] 結束 %s ========\n\n", idx+1, tester.Name())
 
-		fmt.Printf("======== 開始 %s ========\n", tester.Name())
-		if err := tester.Test(); err != nil {
-			return xerrors.Errorf("測試 %s 失敗: %w", tester.Name(), err)
+				break
+			}
 		}
-		fmt.Printf("======== 結束 %s ========\n\n", tester.Name())
 	}
 
 	return nil

@@ -20,12 +20,12 @@ type jetStreamMemoryStorageTester struct {
 	conf *config.Config
 }
 
-func (tester *jetStreamMemoryStorageTester) Enabled() bool {
-	return tester.conf.Testers.JetStreamMemoryStorageTester != nil
-}
-
 func (tester *jetStreamMemoryStorageTester) Name() string {
 	return "測試 JetStream Memory Storage 的效能"
+}
+
+func (tester *jetStreamMemoryStorageTester) Key() string {
+	return "jetstream_memory_storage_tester"
 }
 
 func (tester *jetStreamMemoryStorageTester) Test() error {

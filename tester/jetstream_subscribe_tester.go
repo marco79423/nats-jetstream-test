@@ -19,12 +19,12 @@ type jetStreamSubscribeTester struct {
 	conf *config.Config
 }
 
-func (tester *jetStreamSubscribeTester) Enabled() bool {
-	return tester.conf.Testers.JetStreamSubscribeTester != nil
-}
-
 func (tester *jetStreamSubscribeTester) Name() string {
 	return "測試 JetStream (Subscribe) 的接收效能"
+}
+
+func (tester *jetStreamSubscribeTester) Key() string {
+	return "jetstream_subscribe_tester"
 }
 
 func (tester *jetStreamSubscribeTester) Test() error {

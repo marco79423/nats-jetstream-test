@@ -20,12 +20,12 @@ type streamingSubscribeTester struct {
 	conf *config.Config
 }
 
-func (tester *streamingSubscribeTester) Enabled() bool {
-	return tester.conf.Testers.StreamingSubscribeTester != nil
-}
-
 func (tester *streamingSubscribeTester) Name() string {
 	return "測試 Streaming 的接收的效能"
+}
+
+func (tester *streamingSubscribeTester) Key() string {
+	return "streaming_subscribe_tester"
 }
 
 func (tester *streamingSubscribeTester) Test() error {
