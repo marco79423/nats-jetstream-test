@@ -174,6 +174,8 @@ func MeasureJetStreamPullSubscribeTime(jetStreamCtx nats.JetStreamContext, durab
 			_ = msg
 			// fmt.Printf("Received a JetStream message: %s\n", string(msg.Data))
 			receiveCount++
+
+			msg.Ack()
 		}
 	}
 
