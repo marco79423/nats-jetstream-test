@@ -16,6 +16,7 @@ func ConnectNATS(conf *config.Config, name string) (*nats.Conn, error) {
 		strings.Join(conf.NATSJetStream.Servers, ","),
 		nats.Name(name),
 		nats.Token(conf.NATSJetStream.Token),
+		nats.UserInfo(conf.NATSJetStream.Username, conf.NATSJetStream.Password),
 
 		nats.MaxReconnects(-1),
 		nats.ReconnectHandler(func(conn *nats.Conn) {
