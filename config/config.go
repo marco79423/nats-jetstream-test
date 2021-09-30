@@ -114,10 +114,10 @@ type StreamingLatencyTesterConfig struct {
 }
 
 type JetStreamPurgeStreamTesterConfig struct {
-	Stream      string `mapstructure:"stream"`
-	Subject     string `mapstructure:"subject"`
-	Counts      []int  `mapstructure:"counts"`
-	MessageSize int    `mapstructure:"message_size"`
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Counts       []int  `mapstructure:"counts"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
 }
 
 type JetStreamMemoryStorageTesterConfig struct {

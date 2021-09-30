@@ -108,7 +108,9 @@ testers:
     counts:
       - 100
       - 1000
-    message_size: 1
+    message_sizes:
+      - 1
+      - 100
 
   # FileStorage 和 MemoryStorage 效能比較
   jetstream_memory_storage_tester:
