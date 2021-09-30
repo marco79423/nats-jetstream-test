@@ -37,19 +37,18 @@ func (tester *streamingSubscribeTester) Test() error {
 	defer stanConn.Close()
 
 	rand.Seed(time.Now().UnixNano())
-	channel := fmt.Sprintf("%s.%d", tester.conf.Testers.StreamingSubscribeTester.Channel, rand.Int())
+	channel := tester.conf.Testers.StreamingSubscribeTester.Channel
 	times := tester.conf.Testers.StreamingSubscribeTester.Times
-	messageSize := tester.conf.Testers.StreamingSubscribeTester.MessageSize
-	fmt.Printf("Channel: %s, Times: %d, MessageSize: %d\n", channel, times, messageSize)
+	messageSizes := tester.conf.Testers.StreamingSubscribeTester.MessageSizes
+	fmt.Printf("Channel: %s, Times: %d, MessageSizes: %v\n", channel, times, messageSizes)
 
-	// 發布大量訊息
-	if err := utils.PublishStreamingMessagesWithSize(stanConn, channel, times, messageSize); err != nil {
-		return xerrors.Errorf("發布大量訊息失敗: %w", err)
-	}
+	for _, messageSize := range messageSizes {
+		channel := fmt.Sprintf("%s.%d", channel, rand.Int())
 
-	// 測試 Streaming 訂閱效能
-	if err := utils.MeasureStreamingSubscribeTime(stanConn, channel, times); err != nil {
-		return xerrors.Errorf("測量 Streaming 的接收效能失敗: %w", err)
+		// 測試 Streaming 訂閱效能
+		if err := utils.MeasureStreamingSubscribeTime(stanConn, channel, times, messageSize); err != nil {
+			return xerrors.Errorf("測量 Streaming 的接收效能失敗: %w", err)
+		}
 	}
 
 	return nil

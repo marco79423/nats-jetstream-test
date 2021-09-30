@@ -39,12 +39,14 @@ func (tester *streamingPublishTester) Test() error {
 	rand.Seed(time.Now().UnixNano())
 	channel := fmt.Sprintf("%s.%d", tester.conf.Testers.StreamingPublishTester.Channel, rand.Int())
 	times := tester.conf.Testers.StreamingPublishTester.Times
-	messageSize := tester.conf.Testers.StreamingPublishTester.MessageSize
-	fmt.Printf("Channel: %s, Times: %d, MessageSize: %d\n", channel, times, messageSize)
+	messageSizes := tester.conf.Testers.StreamingPublishTester.MessageSizes
+	fmt.Printf("Channel: %s, Times: %d, MessageSizes: %v\n", channel, times, messageSizes)
 
 	// 測試 Streaming 發布效能
-	if err := utils.MeasureStreamingPublishTime(stanConn, channel, times, messageSize); err != nil {
-		return xerrors.Errorf("測量 Streaming 的發布效能失敗: %w", err)
+	for _, messageSize := range messageSizes {
+		if err := utils.MeasureStreamingPublishTime(stanConn, channel, times, messageSize); err != nil {
+			return xerrors.Errorf("測量 Streaming 的發布效能失敗: %w", err)
+		}
 	}
 
 	return nil

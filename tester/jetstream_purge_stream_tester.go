@@ -58,7 +58,7 @@ func (tester *jetStreamPurgeStreamTester) Test() error {
 }
 
 func (tester *jetStreamPurgeStreamTester) MeasurePurgeStreamTime(js nats.JetStreamContext, streamName, subject string, count, messageSize int) error {
-	fmt.Printf("\n開始測試 JetStream 的 Purge Stream (%d 筆) 的效能\n", count)
+	fmt.Printf("\n開始測量 JetStream 的 Purge Stream (%d 筆) 的效能\n", count)
 
 	// 重建 Stream
 	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{

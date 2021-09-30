@@ -37,11 +37,11 @@ func RecreateJetStreamStreamIfExists(js nats.JetStreamContext, config *nats.Stre
 }
 
 // PublishJetStreamMessagesWithSize 發布大量訊息 (Subject, 數量)
-func PublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
+func PublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, messageCount, messageSize int) error {
 	message := GenerateRandomString(messageSize)
-	for i := 0; i < times; i++ {
+	for i := 0; i < messageCount; i++ {
 		if _, err := jetStreamCtx.Publish(subject, []byte(message)); err != nil {
-			return xerrors.Errorf("發布大量訊息 (Subject: %s, 數量： %d): %w", subject, times, err)
+			return xerrors.Errorf("發布大量訊息 (Subject: %s, 數量： %d): %w", subject, messageCount, err)
 		}
 		// fmt.Println(i)
 	}
@@ -49,11 +49,11 @@ func PublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subjec
 }
 
 // AsyncPublishJetStreamMessagesWithSize 發布大量訊息 Async (Subject, 數量)
-func AsyncPublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
+func AsyncPublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, subject string, messageCount, messageSize int) error {
 	message := GenerateRandomString(messageSize)
-	for i := 0; i < times; i++ {
+	for i := 0; i < messageCount; i++ {
 		if _, err := jetStreamCtx.PublishAsync(subject, []byte(message)); err != nil {
-			return xerrors.Errorf("發布大量訊息 (Subject: %s, 數量： %d): %w", subject, times, err)
+			return xerrors.Errorf("發布大量訊息 (Subject: %s, 數量： %d): %w", subject, messageCount, err)
 		}
 		// fmt.Println(i)
 	}
@@ -63,48 +63,52 @@ func AsyncPublishJetStreamMessagesWithSize(jetStreamCtx nats.JetStreamContext, s
 }
 
 // MeasureJetStreamPublishMsgTime 測試 JetStream 發布效能
-func MeasureJetStreamPublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
-	fmt.Println("開始測試 JetStream 的發布效能")
+func MeasureJetStreamPublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount, messageSize int) error {
+	fmt.Printf("開始測試 JetStream 的發布 (Publish) 效能 (次數: %d, 訊息大小： %d)\n", messageCount, messageSize)
 
 	now := time.Now()
-	if err := PublishJetStreamMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
+	if err := PublishJetStreamMessagesWithSize(jetStreamCtx, subject, messageCount, messageSize); err != nil {
 		return xerrors.Errorf("測量 JetStream 發布訊息所需的時間失敗: %w", subject, err)
 	}
 	elapsedTime := time.Since(now)
 
 	fmt.Printf("全部 %d 筆發布花費時間 %v (訊息大小： %v, 每筆平均花費 %v)\n",
-		times,
+		messageCount,
 		elapsedTime,
 		messageSize,
-		elapsedTime/time.Duration(times),
+		elapsedTime/time.Duration(messageCount),
 	)
 
 	return nil
 }
 
 // MeasureJetStreamAsyncPublishMsgTime 測試 JetStream 發布效能 (Async)
-func MeasureJetStreamAsyncPublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, times, messageSize int) error {
-	fmt.Println("開始測試 JetStream 的發布效能 (Async)")
+func MeasureJetStreamAsyncPublishMsgTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount, messageSize int) error {
+	fmt.Printf("開始測試 JetStream 的發布 (AsyncPublish) 效能 (次數: %d, 訊息大小： %d)\n", messageCount, messageSize)
 
 	now := time.Now()
-	if err := AsyncPublishJetStreamMessagesWithSize(jetStreamCtx, subject, times, messageSize); err != nil {
+	if err := AsyncPublishJetStreamMessagesWithSize(jetStreamCtx, subject, messageCount, messageSize); err != nil {
 		return xerrors.Errorf("測量 JetStream 發布訊息所需的時間失敗: %w", subject, err)
 	}
 	elapsedTime := time.Since(now)
 
 	fmt.Printf("全部 %d 筆發布花費時間 %v (訊息大小： %v, 每筆平均花費 %v)\n",
-		times,
+		messageCount,
 		elapsedTime,
 		messageSize,
-		elapsedTime/time.Duration(times),
+		elapsedTime/time.Duration(messageCount),
 	)
 
 	return nil
 }
 
 // MeasureJetStreamSubscribeTime 測量 JetStream 訂閱效能 (Subscribe)
-func MeasureJetStreamSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
-	fmt.Println("開始測量 JetStream (Subscribe) 的接收效能")
+func MeasureJetStreamSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount, messageSize int) error {
+	fmt.Printf("開始測量 JetStream (Subscribe) 的接收效能 (次數： %d, 訊息大小：%d)\n", messageCount, messageSize)
+
+	if err := PublishJetStreamMessagesWithSize(jetStreamCtx, subject, messageCount, messageSize); err != nil {
+		return xerrors.Errorf("測量 JetStream 訂閱所需的時間失敗: %w", subject, err)
+	}
 
 	wg := sync.WaitGroup{}
 	wg.Add(messageCount)
@@ -127,8 +131,12 @@ func MeasureJetStreamSubscribeTime(jetStreamCtx nats.JetStreamContext, subject s
 }
 
 // MeasureJetStreamChanSubscribeTime 測量 JetStream 訂閱效能 (Chan Subscribe)
-func MeasureJetStreamChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount int) error {
-	fmt.Println("開始測量 JetStream (Chan Subscribe) 的接收效能")
+func MeasureJetStreamChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subject string, messageCount, messageSize int) error {
+	fmt.Printf("開始測量 JetStream (Chan Subscribe) 的接收效能 (次數： %d, 訊息大小：%d)\n", messageCount, messageSize)
+
+	if err := PublishJetStreamMessagesWithSize(jetStreamCtx, subject, messageCount, messageSize); err != nil {
+		return xerrors.Errorf("測量 JetStream 訂閱所需的時間失敗: %w", subject, err)
+	}
 
 	now := time.Now()
 	msgChan := make(chan *nats.Msg, 10000)
@@ -157,8 +165,12 @@ func MeasureJetStreamChanSubscribeTime(jetStreamCtx nats.JetStreamContext, subje
 }
 
 // MeasureJetStreamPullSubscribeTime 測量 JetStream 訂閱效能 (Pull Subscribe)
-func MeasureJetStreamPullSubscribeTime(jetStreamCtx nats.JetStreamContext, durableName, subject string, messageCount, fetchCount int) error {
-	fmt.Println("開始測量 JetStream (Pull Subscribe) 的接收效能")
+func MeasureJetStreamPullSubscribeTime(jetStreamCtx nats.JetStreamContext, durableName, subject string, messageCount, messageSize, fetchCount int) error {
+	fmt.Printf("開始測量 JetStream (Pull Subscribe) 的接收效能 (次數： %d, 訊息大小：%d)\n", messageCount, messageSize)
+
+	if err := PublishJetStreamMessagesWithSize(jetStreamCtx, subject, messageCount, messageSize); err != nil {
+		return xerrors.Errorf("測量 JetStream 訂閱所需的時間失敗: %w", subject, err)
+	}
 
 	now := time.Now()
 	sub, err := jetStreamCtx.PullSubscribe(subject, durableName)

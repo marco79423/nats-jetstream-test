@@ -43,27 +43,24 @@ func (tester *jetStreamSubscribeTester) Test() error {
 	streamName := tester.conf.Testers.JetStreamSubscribeTester.Stream
 	subject := tester.conf.Testers.JetStreamSubscribeTester.Subject
 	times := tester.conf.Testers.JetStreamSubscribeTester.Times
-	messageSize := tester.conf.Testers.JetStreamSubscribeTester.MessageSize
-	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d\n", streamName, subject, times, messageSize)
+	messageSizes := tester.conf.Testers.JetStreamSubscribeTester.MessageSizes
+	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSizes: %v\n", streamName, subject, times, messageSizes)
 
-	// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
-	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
-		Name: streamName,
-		Subjects: []string{
-			subject,
-		},
-	}); err != nil {
-		return xerrors.Errorf("重建 Stream %s 失敗: %w", streamName, err)
-	}
+	for _, messageSize := range messageSizes {
+		// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
+		if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
+			Name: streamName,
+			Subjects: []string{
+				subject,
+			},
+		}); err != nil {
+			return xerrors.Errorf("重建 Stream %s 失敗: %w", streamName, err)
+		}
 
-	// 發布大量訊息
-	if err := utils.PublishJetStreamMessagesWithSize(js, subject, times, messageSize); err != nil {
-		return xerrors.Errorf("發布大量訊息失敗: %w", subject, err)
-	}
-
-	// 測量 JetStream 訂閱效能 (Subscribe)
-	if err := utils.MeasureJetStreamSubscribeTime(js, subject, times); err != nil {
-		return xerrors.Errorf("測試 JetStream 的接收效能失敗: %w", err)
+		// 測量 JetStream 訂閱效能 (Subscribe)
+		if err := utils.MeasureJetStreamSubscribeTime(js, subject, times, messageSize); err != nil {
+			return xerrors.Errorf("測試 JetStream 的接收效能失敗: %w", err)
+		}
 	}
 
 	return nil

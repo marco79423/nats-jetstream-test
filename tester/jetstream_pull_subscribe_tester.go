@@ -45,35 +45,32 @@ func (tester *jetStreamPullSubscribeTester) Test() error {
 	streamName := tester.conf.Testers.JetStreamPullSubscribeTester.Stream
 	subject := tester.conf.Testers.JetStreamPullSubscribeTester.Subject
 	times := tester.conf.Testers.JetStreamPullSubscribeTester.Times
-	messageSize := tester.conf.Testers.JetStreamPullSubscribeTester.MessageSize
+	messageSizes := tester.conf.Testers.JetStreamPullSubscribeTester.MessageSizes
 	fetchCounts := tester.conf.Testers.JetStreamPullSubscribeTester.FetchCounts
-	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d, fetchCounts: %v\n", streamName, subject, times, messageSize, fetchCounts)
+	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %v, fetchCounts: %v\n", streamName, subject, times, messageSizes, fetchCounts)
 
-	// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
-	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
-		Name: streamName,
-		Subjects: []string{
-			subject,
-		},
-	}); err != nil {
-		return xerrors.Errorf("重建 Stream %s 失敗: %w", streamName, err)
-	}
-
-	// 發布大量訊息
-	if err := utils.PublishJetStreamMessagesWithSize(js, subject, times, messageSize); err != nil {
-		return xerrors.Errorf("發布大量訊息失敗: %w", subject, err)
-	}
-
-	// 測量 JetStream 訂閱效能 (Pull Subscribe)
-	rand.Seed(time.Now().UnixNano())
-	for idx, fetchCount := range fetchCounts {
-		durableName := fmt.Sprintf("ray-jetstream-performance-%d", fetchCount)
-		if err := utils.MeasureJetStreamPullSubscribeTime(js, durableName, subject, times, fetchCount); err != nil {
-			return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
+	for _, messageSize := range messageSizes {
+		// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
+		if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
+			Name: streamName,
+			Subjects: []string{
+				subject,
+			},
+		}); err != nil {
+			return xerrors.Errorf("重建 Stream %s 失敗: %w", streamName, err)
 		}
 
-		if idx+1 < len(fetchCounts) {
-			fmt.Println()
+		// 測量 JetStream 訂閱效能 (Pull Subscribe)
+		rand.Seed(time.Now().UnixNano())
+		for idx, fetchCount := range fetchCounts {
+			durableName := fmt.Sprintf("%s-%d", tester.Key(), fetchCount)
+			if err := utils.MeasureJetStreamPullSubscribeTime(js, durableName, subject, times, messageSize, fetchCount); err != nil {
+				return xerrors.Errorf("測試 JetStream (Pull Subscribe) 的接收效能失敗: %w", err)
+			}
+
+			if idx+1 < len(fetchCounts) {
+				fmt.Println()
+			}
 		}
 	}
 

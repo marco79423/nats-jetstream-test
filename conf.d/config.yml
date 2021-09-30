@@ -11,65 +11,66 @@ nats_jet_stream:
   token: ''
 
 enabled_testers:
-  # Streaming 的發布和接收效能測試
-  - streaming_publish_tester
-  - streaming_subscribe_tester
-  - streaming_latency_tester
-
-  # JetStream 的發布效能測試
+  # 發布效能測試
   - jetstream_publish_tester
   - jetstream_async_publish_tester
+  - streaming_publish_tester
 
-  # JetStream 的訂閱效能測試
+  # 訂閱效能測試
   - jetstream_subscribe_tester
   - jetstream_chan_subscribe_tester
   - jetstream_pull_subscribe_tester
+  - streaming_subscribe_tester
 
-  # JetStream 延遲測試
+  # 延遲測試
   - jetstream_latency_tester
+  - streaming_latency_tester
 
-  # JetStream 測試清除效能測試
+  # 清除效能測試
+  - jetstream_purge_stream_tester
+
+  # FileStorage 和 MemoryStorage 效能比較
+  - jetstream_memory_storage_tester
+
 testers:
-  # Streaming 的發布和接收效能測試
-  streaming_publish_tester:
-    channel: streaming_publish_tester
-    times: 100
-    message_size: 1
-
-  streaming_subscribe_tester:
-    channel: streaming_subscribe_tester
-    times: 100
-    message_size: 1
-
-  streaming_latency_tester:
-    channel: streaming_subscribe_tester
-    times: 10000
-
-  # JetStream 的發布效能測試
+  # 發布效能測試
   jetstream_publish_tester:
     stream: ray
     subject: ray.fuck
     times: 100
-    message_size: 8
-
+    message_sizes:
+      - 1
+      - 80000
   jetstream_async_publish_tester:
     stream: ray
     subject: ray.fuck
     times: 100
-    message_size: 8
+    message_sizes:
+      - 1
+      - 80000
+  streaming_publish_tester:
+    channel: streaming_publish_tester
+    times: 100
+    message_sizes:
+      - 1
+      - 80000
 
-  # JetStream 的訂閱效能測試
+  # 訂閱效能測試
   jetstream_subscribe_tester:
     stream: ray
     subject: ray.fuck
     times: 100
-    message_size: 8
+    message_sizes:
+      - 1
+      - 80000
 
   jetstream_chan_subscribe_tester:
     stream: ray
     subject: ray.fuck
     times: 100
-    message_size: 8
+    message_sizes:
+      - 1
+      - 80000
 
   jetstream_pull_subscribe_tester:
     stream: ray
@@ -79,15 +80,28 @@ testers:
       - 1
       - 10
       - 100
-    message_size: 8
+    message_sizes:
+      - 1
+      - 80000
 
-  # JetStream 延遲測試
+  streaming_subscribe_tester:
+    channel: streaming_subscribe_tester
+    times: 100
+    message_sizes:
+      - 1
+      - 80000
+
+  # 延遲測試
   jetstream_latency_tester:
     stream: ray
     subject: ray.fuck
-    times: 100
+    times: 1000
 
-  # JetStream 測試效能測試
+  streaming_latency_tester:
+    channel: streaming_subscribe_tester
+    times: 1000
+
+  # 清除效能測試
   jetstream_purge_stream_tester:
     stream: test_jetstream_purge_stream
     subject: test_jetstream_purge_stream
@@ -96,7 +110,7 @@ testers:
       - 1000
     message_size: 1
 
-  # JetStream FileStorage 和 MemoryStorage 效能比較
+  # FileStorage 和 MemoryStorage 效能比較
   jetstream_memory_storage_tester:
     stream: test_jetstream_memory_storage
     subject: test_jetstream_memory_storage

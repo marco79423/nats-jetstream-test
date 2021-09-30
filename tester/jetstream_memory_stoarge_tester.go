@@ -67,7 +67,7 @@ func (tester *jetStreamMemoryStorageTester) TestJetStreamFileStoragePerformance(
 		Subjects: []string{
 			subject,
 		},
-		Storage: nats.FileStorage, // 預設
+		Storage: nats.MemoryStorage,
 	}); err != nil {
 		return xerrors.Errorf("建立 Stream %s 失敗: %w", streamName, err)
 	}
@@ -77,8 +77,18 @@ func (tester *jetStreamMemoryStorageTester) TestJetStreamFileStoragePerformance(
 		return xerrors.Errorf("測試 JetStream 的發布效能失敗: %w", err)
 	}
 
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
+		Name: streamName,
+		Subjects: []string{
+			subject,
+		},
+		Storage: nats.FileStorage, // 預設
+	}); err != nil {
+		return xerrors.Errorf("建立 Stream %s 失敗: %w", streamName, err)
+	}
+
 	// 測量 JetStream 訂閱效能 (Subscribe)
-	if err := utils.MeasureJetStreamSubscribeTime(js, subject, times); err != nil {
+	if err := utils.MeasureJetStreamSubscribeTime(js, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測試 JetStream 的接收效能失敗: %w", err)
 	}
 
@@ -103,8 +113,56 @@ func (tester *jetStreamMemoryStorageTester) TestJetStreamMemoryStoragePerformanc
 		return xerrors.Errorf("測試 JetStream 的發布效能失敗: %w", err)
 	}
 
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
+		Name: streamName,
+		Subjects: []string{
+			subject,
+		},
+		Storage: nats.MemoryStorage,
+	}); err != nil {
+		return xerrors.Errorf("建立 Stream %s 失敗: %w", streamName, err)
+	}
+
 	// 測量 JetStream 訂閱效能 (Subscribe)
-	if err := utils.MeasureJetStreamSubscribeTime(js, subject, times); err != nil {
+	if err := utils.MeasureJetStreamSubscribeTime(js, subject, times, messageSize); err != nil {
+		return xerrors.Errorf("測試 JetStream 的接收效能失敗: %w", err)
+	}
+
+	return nil
+}
+
+
+
+func (tester *jetStreamMemoryStorageTester) MeasurePublishAndSubscribePerformance(js nats.JetStreamContext, storage nats.StorageType, streamName, subject string, times, messageSize int) error {
+	fmt.Println("\n開始測試 JetStream MemoryStorage 的效能")
+
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
+		Name: streamName,
+		Subjects: []string{
+			subject,
+		},
+		Storage: storage,
+	}); err != nil {
+		return xerrors.Errorf("建立 Stream %s 失敗: %w", streamName, err)
+	}
+
+	// 測量 JetStream 發布效能
+	if err := utils.MeasureJetStreamPublishMsgTime(js, subject, times, messageSize); err != nil {
+		return xerrors.Errorf("測試 JetStream 的發布效能失敗: %w", err)
+	}
+
+	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
+		Name: streamName,
+		Subjects: []string{
+			subject,
+		},
+		Storage: storage,
+	}); err != nil {
+		return xerrors.Errorf("建立 Stream %s 失敗: %w", streamName, err)
+	}
+
+	// 測量 JetStream 訂閱效能 (Subscribe)
+	if err := utils.MeasureJetStreamSubscribeTime(js, subject, times, messageSize); err != nil {
 		return xerrors.Errorf("測試 JetStream 的接收效能失敗: %w", err)
 	}
 

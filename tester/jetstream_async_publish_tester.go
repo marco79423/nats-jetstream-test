@@ -20,7 +20,7 @@ type jetStreamAsyncPublishTester struct {
 }
 
 func (tester *jetStreamAsyncPublishTester) Name() string {
-	return "測試 JetStream 的發布效能 (Async)"
+	return "測試 JetStream 的發布效能 (AsyncPublish)"
 }
 
 func (tester *jetStreamAsyncPublishTester) Key() string {
@@ -43,22 +43,24 @@ func (tester *jetStreamAsyncPublishTester) Test() error {
 	streamName := tester.conf.Testers.JetStreamPublishTester.Stream
 	subject := tester.conf.Testers.JetStreamPublishTester.Subject
 	times := tester.conf.Testers.JetStreamPublishTester.Times
-	messageSize := tester.conf.Testers.JetStreamPublishTester.MessageSize
-	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d\n", streamName, subject, times, messageSize)
+	messageSizes := tester.conf.Testers.JetStreamPublishTester.MessageSizes
+	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSizes: %v\n", streamName, subject, times, messageSizes)
 
-	// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
-	if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
-		Name: streamName,
-		Subjects: []string{
-			subject,
-		},
-	}); err != nil {
-		return xerrors.Errorf("重建 Stream %s 失敗: %w", streamName, err)
-	}
+	for _, messageSize := range messageSizes {
+		// 重建 Stream 測試用 (JetStream 需要顯示管理 Stream)
+		if _, err := utils.RecreateJetStreamStreamIfExists(js, &nats.StreamConfig{
+			Name: streamName,
+			Subjects: []string{
+				subject,
+			},
+		}); err != nil {
+			return xerrors.Errorf("重建 Stream %s 失敗: %w", streamName, err)
+		}
 
-	// 測量 JetStream 發布效能
-	if err := utils.MeasureJetStreamAsyncPublishMsgTime(js, subject, times, messageSize); err != nil {
-		return xerrors.Errorf("測試 JetStream 的發布 (Async) 效能失敗: %w", err)
+		// 測量 JetStream 發布效能
+		if err := utils.MeasureJetStreamAsyncPublishMsgTime(js, subject, times, messageSize); err != nil {
+			return xerrors.Errorf("測試 JetStream 的發布效能失敗: %w", err)
+		}
 	}
 
 	return nil

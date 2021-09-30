@@ -55,34 +55,51 @@ type Testers struct {
 }
 
 type StreamingPublishTesterConfig struct {
-	Channel     string `mapstructure:"channel"`
-	Times       int    `mapstructure:"times"`
-	MessageSize int    `mapstructure:"message_size"`
+	Channel      string `mapstructure:"channel"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
 }
 
 type StreamingSubscribeTesterConfig struct {
-	Channel     string `mapstructure:"channel"`
-	Times       int    `mapstructure:"times"`
-	MessageSize int    `mapstructure:"message_size"`
-}
-
-type StreamingLatencyTesterConfig struct {
-	Channel     string `mapstructure:"channel"`
-	Times       int    `mapstructure:"times"`
+	Channel      string `mapstructure:"channel"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
 }
 
 type JetStreamPublishTesterConfig struct {
-	Stream      string `mapstructure:"stream"`
-	Subject     string `mapstructure:"subject"`
-	Times       int    `mapstructure:"times"`
-	MessageSize int    `mapstructure:"message_size"`
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
 }
 
 type JetStreamAsyncPublishTesterConfig struct {
-	Stream      string `mapstructure:"stream"`
-	Subject     string `mapstructure:"subject"`
-	Times       int    `mapstructure:"times"`
-	MessageSize int    `mapstructure:"message_size"`
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
+}
+
+type JetStreamSubscribeTesterConfig struct {
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
+}
+
+type JetStreamChanSubscribeTesterConfig struct {
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
+}
+
+type JetStreamPullSubscribeTesterConfig struct {
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	FetchCounts  []int  `mapstructure:"fetch_counts"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
 }
 
 type JetStreamLatencyTesterConfig struct {
@@ -91,26 +108,9 @@ type JetStreamLatencyTesterConfig struct {
 	Times   int    `mapstructure:"times"`
 }
 
-type JetStreamSubscribeTesterConfig struct {
-	Stream      string `mapstructure:"stream"`
-	Subject     string `mapstructure:"subject"`
-	Times       int    `mapstructure:"times"`
-	MessageSize int    `mapstructure:"message_size"`
-}
-
-type JetStreamChanSubscribeTesterConfig struct {
-	Stream      string `mapstructure:"stream"`
-	Subject     string `mapstructure:"subject"`
-	Times       int    `mapstructure:"times"`
-	MessageSize int    `mapstructure:"message_size"`
-}
-
-type JetStreamPullSubscribeTesterConfig struct {
-	Stream      string `mapstructure:"stream"`
-	Subject     string `mapstructure:"subject"`
-	Times       int    `mapstructure:"times"`
-	FetchCounts []int  `mapstructure:"fetch_counts"`
-	MessageSize int    `mapstructure:"message_size"`
+type StreamingLatencyTesterConfig struct {
+	Channel string `mapstructure:"channel"`
+	Times   int    `mapstructure:"times"`
 }
 
 type JetStreamPurgeStreamTesterConfig struct {
