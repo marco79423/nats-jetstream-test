@@ -29,7 +29,7 @@ func (tester *jetStreamMemoryStorageTester) Key() string {
 }
 
 func (tester *jetStreamMemoryStorageTester) Test() error {
-	natsConn, err := utils.ConnectNATS(tester.conf, "ray.jetstream.memory_storage")
+	natsConn, err := utils.ConnectNATS(tester.conf, tester.Key())
 	if err != nil {
 		return xerrors.Errorf("取得 NATS 連線失敗: %w", err)
 	}

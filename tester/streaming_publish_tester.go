@@ -30,7 +30,7 @@ func (tester *streamingPublishTester) Key() string {
 
 func (tester *streamingPublishTester) Test() error {
 	// 取得 Streaming 的連線
-	stanConn, err := utils.ConnectSTAN(tester.conf, tester.Name())
+	stanConn, err := utils.ConnectSTAN(tester.conf, tester.Key())
 	if err != nil {
 		return xerrors.Errorf("取得 STAN 連線失敗: %w", err)
 	}

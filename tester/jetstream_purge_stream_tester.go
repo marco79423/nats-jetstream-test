@@ -30,7 +30,7 @@ func (tester *jetStreamPurgeStreamTester) Key() string {
 }
 
 func (tester *jetStreamPurgeStreamTester) Test() error {
-	natsConn, err := utils.ConnectNATS(tester.conf, tester.Name())
+	natsConn, err := utils.ConnectNATS(tester.conf, tester.Key())
 	if err != nil {
 		return xerrors.Errorf("取得 NATS 連線失敗: %w", err)
 	}
