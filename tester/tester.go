@@ -24,6 +24,7 @@ func RunTesters() error {
 		NewStreamingSubscribeTester(conf),
 		NewJetStreamPublishTester(conf),
 		NewJetStreamAsyncPublishTester(conf),
+		NewJetStreamLatencyTester(conf),
 		NewJetStreamSubscribeTester(conf),
 		NewJetStreamChanSubscribeTester(conf),
 		NewJetStreamPullSubscribeTester(conf),
