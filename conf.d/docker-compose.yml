@@ -1,0 +1,19 @@
+version: '3'
+services:
+  jetstream:
+    image: nats:2.6.1
+    container_name: jetstream
+    volumes:
+      - ".:/conf.d"
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: -m 8222 -js -D -c /conf.d/nats-server.conf
+
+  streaming:
+    image: nats-streaming:0.22.1
+    container_name: streaming
+    ports:
+      - "4223:4222"
+      - "8223:8222"
+    command: -m 8223 -D
