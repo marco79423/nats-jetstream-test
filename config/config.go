@@ -43,6 +43,7 @@ type NATSJetStreamConfig struct {
 type Testers struct {
 	StreamingPublishTester       *StreamingPublishTesterConfig       `mapstructure:"streaming_publish_tester"`
 	StreamingSubscribeTester     *StreamingSubscribeTesterConfig     `mapstructure:"streaming_subscribe_tester"`
+	StreamingLatencyTester       *StreamingLatencyTesterConfig       `mapstructure:"streaming_latency_tester"`
 	JetStreamPurgeStreamTester   *JetStreamPurgeStreamTesterConfig   `mapstructure:"jetstream_purge_stream_tester"`
 	JetStreamMemoryStorageTester *JetStreamMemoryStorageTesterConfig `mapstructure:"jetstream_memory_storage_tester"`
 	JetStreamPublishTester       *JetStreamPublishTesterConfig       `mapstructure:"jetstream_publish_tester"`
@@ -63,6 +64,11 @@ type StreamingSubscribeTesterConfig struct {
 	Channel     string `mapstructure:"channel"`
 	Times       int    `mapstructure:"times"`
 	MessageSize int    `mapstructure:"message_size"`
+}
+
+type StreamingLatencyTesterConfig struct {
+	Channel     string `mapstructure:"channel"`
+	Times       int    `mapstructure:"times"`
 }
 
 type JetStreamPublishTesterConfig struct {

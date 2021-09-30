@@ -14,6 +14,7 @@ enabled_testers:
   # Streaming 的發布和接收效能測試
   - streaming_publish_tester
   - streaming_subscribe_tester
+  - streaming_latency_tester
 
   # JetStream 的發布效能測試
   - jetstream_publish_tester
@@ -28,22 +29,21 @@ enabled_testers:
   - jetstream_latency_tester
 
   # JetStream 測試清除效能測試
-  - jetstream_purge_stream_tester
-
-  # JetStream FileStorage 和 MemoryStorage 效能比較
-  - jetstream_memory_storage_tester
-
 testers:
   # Streaming 的發布和接收效能測試
   streaming_publish_tester:
-    channel: test_streaming_performance
+    channel: streaming_publish_tester
     times: 100
     message_size: 1
 
   streaming_subscribe_tester:
-    channel: test_streaming_performance
+    channel: streaming_subscribe_tester
     times: 100
     message_size: 1
+
+  streaming_latency_tester:
+    channel: streaming_subscribe_tester
+    times: 10000
 
   # JetStream 的發布效能測試
   jetstream_publish_tester:
