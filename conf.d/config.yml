@@ -106,8 +106,8 @@ testers:
     stream: test_jetstream_purge_stream
     subject: test_jetstream_purge_stream
     counts:
+      - 1
       - 100
-      - 1000
     message_sizes:
       - 1
       - 100
@@ -117,4 +117,6 @@ testers:
     stream: test_jetstream_memory_storage
     subject: test_jetstream_memory_storage
     times: 100
-    message_size: 10
+    message_sizes:
+      - 1
+      - 100

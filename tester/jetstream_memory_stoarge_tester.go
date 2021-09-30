@@ -45,15 +45,17 @@ func (tester *jetStreamMemoryStorageTester) Test() error {
 	streamName := tester.conf.Testers.JetStreamMemoryStorageTester.Stream
 	subject := tester.conf.Testers.JetStreamMemoryStorageTester.Subject
 	times := tester.conf.Testers.JetStreamMemoryStorageTester.Times
-	messageSize := tester.conf.Testers.JetStreamMemoryStorageTester.MessageSize
-	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d\n", streamName, subject, times, messageSize)
+	messageSizes := tester.conf.Testers.JetStreamMemoryStorageTester.MessageSizes
+	fmt.Printf("Stream: %s, Subject: %s, Times: %d, MessageSize: %d\n", streamName, subject, times, messageSizes)
 
-	if err := tester.TestJetStreamMemoryStoragePerformance(js, streamName, subject, times, messageSize); err != nil {
-		return xerrors.Errorf("測試 JetStream MemoryStorage 的效能: %w", err)
-	}
+	for _, messageSize := range messageSizes {
+		if err := tester.TestJetStreamMemoryStoragePerformance(js, streamName, subject, times, messageSize); err != nil {
+			return xerrors.Errorf("測試 JetStream MemoryStorage 的效能: %w", err)
+		}
 
-	if err := tester.TestJetStreamFileStoragePerformance(js, streamName, subject, times, messageSize); err != nil {
-		return xerrors.Errorf("測試 JetStream FileStorage 的效能: %w", err)
+		if err := tester.TestJetStreamFileStoragePerformance(js, streamName, subject, times, messageSize); err != nil {
+			return xerrors.Errorf("測試 JetStream FileStorage 的效能: %w", err)
+		}
 	}
 
 	return nil
@@ -130,8 +132,6 @@ func (tester *jetStreamMemoryStorageTester) TestJetStreamMemoryStoragePerformanc
 
 	return nil
 }
-
-
 
 func (tester *jetStreamMemoryStorageTester) MeasurePublishAndSubscribePerformance(js nats.JetStreamContext, storage nats.StorageType, streamName, subject string, times, messageSize int) error {
 	fmt.Println("\n開始測試 JetStream MemoryStorage 的效能")

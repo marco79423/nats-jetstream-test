@@ -121,10 +121,10 @@ type JetStreamPurgeStreamTesterConfig struct {
 }
 
 type JetStreamMemoryStorageTesterConfig struct {
-	Stream      string `mapstructure:"stream"`
-	Subject     string `mapstructure:"subject"`
-	Times       int    `mapstructure:"times"`
-	MessageSize int    `mapstructure:"message_size"`
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
 }
 
 // loadConfig 讀取設定檔
