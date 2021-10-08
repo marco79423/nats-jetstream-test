@@ -29,7 +29,7 @@ func  MeasureStreamingPublishTime(stanConn stan.Conn, channel string, times, mes
 
 	now := time.Now()
 	if err := PublishStreamingMessagesWithSize(stanConn, channel, times, messageSize); err != nil {
-		return xerrors.Errorf("測量 Streaming 發布訊息效能失敗: %w", channel, err)
+		return xerrors.Errorf("測量 Streaming 發布效能失敗: %w", err)
 	}
 
 	elapsedTime := time.Since(now)
