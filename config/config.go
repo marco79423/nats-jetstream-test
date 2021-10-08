@@ -41,17 +41,32 @@ type NATSJetStreamConfig struct {
 }
 
 type Testers struct {
-	StreamingPublishTester       *StreamingPublishTesterConfig       `mapstructure:"streaming_publish_tester"`
+	JetStreamPublishTester *JetStreamPublishTesterConfig `mapstructure:"jetstream_publish_tester"`
+	StreamingPublishTester *StreamingPublishTesterConfig `mapstructure:"streaming_publish_tester"`
+	NATSPublishTester      *NATSPublishTesterConfig      `mapstructure:"nats_publish_tester"`
+
 	StreamingSubscribeTester     *StreamingSubscribeTesterConfig     `mapstructure:"streaming_subscribe_tester"`
 	StreamingLatencyTester       *StreamingLatencyTesterConfig       `mapstructure:"streaming_latency_tester"`
 	JetStreamPurgeStreamTester   *JetStreamPurgeStreamTesterConfig   `mapstructure:"jetstream_purge_stream_tester"`
 	JetStreamMemoryStorageTester *JetStreamMemoryStorageTesterConfig `mapstructure:"jetstream_memory_storage_tester"`
-	JetStreamPublishTester       *JetStreamPublishTesterConfig       `mapstructure:"jetstream_publish_tester"`
 	JetStreamLatencyTester       *JetStreamLatencyTesterConfig       `mapstructure:"jetstream_latency_tester"`
 	JetStreamAsyncPublishTester  *JetStreamAsyncPublishTesterConfig  `mapstructure:"jetstream_async_publish_tester"`
 	JetStreamSubscribeTester     *JetStreamSubscribeTesterConfig     `mapstructure:"jetstream_subscribe_tester"`
 	JetStreamChanSubscribeTester *JetStreamChanSubscribeTesterConfig `mapstructure:"jetstream_chan_subscribe_tester"`
 	JetStreamPullSubscribeTester *JetStreamPullSubscribeTesterConfig `mapstructure:"jetstream_pull_subscribe_tester"`
+}
+
+type JetStreamPublishTesterConfig struct {
+	Stream       string `mapstructure:"stream"`
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
+}
+
+type NATSPublishTesterConfig struct {
+	Subject      string `mapstructure:"subject"`
+	Times        int    `mapstructure:"times"`
+	MessageSizes []int  `mapstructure:"message_sizes"`
 }
 
 type StreamingPublishTesterConfig struct {
@@ -62,13 +77,6 @@ type StreamingPublishTesterConfig struct {
 
 type StreamingSubscribeTesterConfig struct {
 	Channel      string `mapstructure:"channel"`
-	Times        int    `mapstructure:"times"`
-	MessageSizes []int  `mapstructure:"message_sizes"`
-}
-
-type JetStreamPublishTesterConfig struct {
-	Stream       string `mapstructure:"stream"`
-	Subject      string `mapstructure:"subject"`
 	Times        int    `mapstructure:"times"`
 	MessageSizes []int  `mapstructure:"message_sizes"`
 }

@@ -15,6 +15,7 @@ enabled_testers:
   - jetstream_publish_tester
   - jetstream_async_publish_tester
   - streaming_publish_tester
+  - nats_publish_tester
 
   # 訂閱效能測試
   - jetstream_subscribe_tester
@@ -50,6 +51,12 @@ testers:
       - 80000
   streaming_publish_tester:
     channel: streaming_publish_tester
+    times: 100
+    message_sizes:
+      - 1
+      - 80000
+  nats_publish_tester:
+    subject: nats_publish_tester
     times: 100
     message_sizes:
       - 1
